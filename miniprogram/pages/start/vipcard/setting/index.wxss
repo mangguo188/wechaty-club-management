@@ -1,0 +1,10 @@
+/* pages/start/add/add.wxss */
+.popup__button {
+    display: block;
+    flex: 1;
+    color: #33cd5f;
+    position: relative;
+}
+.input_width {
+width: 240rpx;
+}

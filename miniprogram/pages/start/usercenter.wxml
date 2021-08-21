@@ -1,0 +1,97 @@
+<cu-custom bgColor="bg-blue2 text-white" isBack="{{false}}">
+  <view slot="backText">返回</view>
+  <view slot="content">个人中心</view>
+</cu-custom>
+
+<view class="page__bd">
+
+  <view class="UCenter-bg bg-blue2">
+    <view class="cu-avatar-64">
+      <open-data type="userAvatarUrl"></open-data>
+    </view>
+    <view class="text-xl margin-top">
+      <open-data type="userNickName"></open-data>
+    </view>
+  </view>
+
+
+  <view class="page__bd">
+    <view wx:if="{{setting_info.allow_sub_act&&debug_num>=10}}"
+      class="padding flex text-center text-grey bg-white shadow-warp">
+      <view wx:for="{{ handle_items }}" class="flex flex-sub flex-direction" wx:key="index" bindtap="to_add"
+        data-url="{{item.pageUrl}}">
+        <view class="text-xl text-blue"><text class="{{item.icon}}"></text></view>
+        <view class="margin-top-sm">
+          {{item.name}}
+        </view>
+      </view>
+      <!-- <view class="flex flex-sub flex-direction solid-right">
+      <view class="text-xxl text-blue">{{starCount}}</view>
+      <view class="margin-top-sm">
+        <text class="cuIcon-favorfill"></text> Star</view>
+    </view>
+    <view class="flex flex-sub flex-direction">
+      <view class="text-xxl text-green">{{forksCount}}</view>
+      <view class="margin-top-sm">
+        <text class="cuIcon-fork"></text> Fork</view>
+    </view> -->
+    </view>
+
+    <view wx:if="{{debug_num>=10}}" class="cu-list menu card-menu margin-bottom-xl shadow-lg radius margin-top">
+      <view class="cu-item arrow">
+        <navigator class="content" url="/pages/start/vipcard/index" hover-class="none">
+          <text class="cuIcon-settingsfill text-blue"></text>
+          <text class="text-grey">我是会长</text>
+        </navigator>
+      </view>
+      <view class="cu-item arrow">
+        <navigator class="content" url="/pages/start/usercenter/assetaccount/index" hover-class="none">
+          <text class="cuIcon-questionfill text-blue"></text>
+          <text class="text-grey">账户资产</text>
+        </navigator>
+      </view>
+    </view>
+
+    <view wx:if="{{debug_num>=10}}" class="cu-list menu card-menu margin-bottom-xl shadow-lg radius margin-top">
+      <view class="cu-item arrow">
+        <navigator class="content" url="/pages/admin/setting/index" hover-class="none">
+          <text class="cuIcon-settingsfill text-blue"></text>
+          <text class="text-grey">系统设置</text>
+        </navigator>
+      </view>
+      <view class="cu-item arrow">
+        <navigator class="content" url="/pages/admin/datas/index" hover-class="none">
+          <text class="cuIcon-questionfill text-blue"></text>
+          <text class="text-grey">数据管理</text>
+        </navigator>
+      </view>
+    </view>
+
+  </view>
+
+
+  <view class="cu-list menu card-menu margin-bottom-xl shadow-lg radius margin-top">
+    <view class="cu-item arrow">
+      <navigator class="content" url="/pages/about/log/log" hover-class="none">
+        <text class="cuIcon-settingsfill text-blue"></text>
+        <text class="text-grey">设置</text>
+      </navigator>
+    </view>
+    <view wx:if="{{debug_num>=10}}" class="cu-item arrow">
+      <navigator class="content" url="/pages/about/about/about" hover-class="none">
+        <text class="cuIcon-questionfill text-blue"></text>
+        <text class="text-grey">帮助与支持</text>
+      </navigator>
+    </view>
+    <view class="cu-item arrow">
+      <button class="cu-btn content" open-type="feedback">
+        <text class="cuIcon-writefill text-blue"></text>
+        <text class="text-grey">意见反馈</text>
+      </button>
+    </view>
+  </view>
+  <view class="text-center" bindtap='debug_bt'>
+    <text>Copyright © 2020 超哥出品</text>
+  </view>
+  <view class="cu-tabbar-height"></view>
+</view>

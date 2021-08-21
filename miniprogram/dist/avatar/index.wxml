@@ -1,0 +1,7 @@
+<view class="wux-class {{ classes.wrap }}" style="{{ extStyle }}">
+  <image src="{{ src }}" onerror="imgOnerror" wx:if="{{ src }}" />
+  <open-data wx:if="{{ userAvatarUrl&&!src }}" type="userAvatarUrl"></open-data>
+  <text class="{{ classes.string }}" style="{{ childrenStyle }}" wx:else>
+        <slot></slot>
+    </text>
+</view>

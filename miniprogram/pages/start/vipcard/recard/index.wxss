@@ -1,0 +1,15 @@
+/* miniprogram/pages/start/vipcard/recard/index.wxss */
+
+page {
+}
+
+.page-null {
+  margin: 100rpx 0rpx 0rpx 0rpx;
+}
+.sub-title {
+  padding: 0rpx 30rpx;
+  font-size: 28rpx;
+  color: #888;
+  width: 100%;
+  box-sizing: border-box;
+}

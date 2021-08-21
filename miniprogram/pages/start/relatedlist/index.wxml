@@ -1,0 +1,365 @@
+<view class="page">
+	<block wx:if="{{openid&&!user.wxid}}">
+		<block wx:if="{{hasUserInfo}}">
+			<view class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="solid-bottom padding">
+						<view class="cu-avatar xl round" style="background-image:url({{userInfo.avatarUrl}});"></view>
+					</view>
+					<view class="padding">{{userInfo.nickName}}</view>
+				</view>
+			</view>
+			<view wx:if="{{peer_list.length!=0}}" class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="padding text-xxl">
+						<text class="text-green">激活成功！</text>
+					</view>
+					<view class="padding">系统中已同步到你的信息，群管理员正在审核，请耐心等待~</view>
+				</view>
+			</view>
+			<view wx:if="{{peer_list.length==0}}" class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="padding text-xxl">
+						<text class="text-red">激活失败！</text>
+					</view>
+					<view class="padding text-left"><text>身份认证失败：\n1.请确认从聊天中的个人专属登记卡片进入小程序\n2.从他人的专属登记卡片进入无效</text></view>
+				</view>
+			</view>
+		</block>
+		<view wx:else class="padding text-center">
+			<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
+
+				<view class="padding text-xxl">
+					<button disabled="{{!ops.wxid}}" class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
+						登陆激活
+					</button>
+				</view>
+				<view wx:if="{{ops.wxid}}" class="padding"><text>{{ops.wxid}}\n\n请点击按钮完成会员认证激活~</text></view>
+				<view wx:if="{{!ops.wxid}}" class="padding">请从个人专属小程序登记卡片进入小程序进行登记~</view>
+
+			</view>
+		</view>
+	</block>
+	<!-- 栏目列表 -->
+	<!-- <view class="cu-list grid col-{{gridCol}} {{gridBorder?'':'no-border'}}">
+		<view class="cu-item" wx:for="{{iconList}}" wx:key="index" wx:if="{{index<gridCol*1}}">
+			<view class="cuIcon-{{item.icon}} text-{{item.color}}">
+				<view class="cu-tag badge" wx:if="{{item.badge!=0}}">
+					<block wx:if="{{item.badge!=1}}">{{item.badge>99?"99+":item.badge}}</block>
+				</view>
+			</view>
+			<text>{{item.name}}</text>
+		</view>
+	</view> -->
+
+	<!-- 活动推荐 -->
+	<!-- <view class="cu-bar bg-white">
+		<view class="action">
+			活动推荐
+		</view>
+		<view class="action">
+			<text class="text-sm">更多</text>
+		</view>
+	</view> -->
+
+
+	<!-- 日期切换tab -->
+	<!-- <scroll-view scroll-x class="bg-white nav" scroll-with-animation scroll-left="{{scrollLeft}}">
+			<view class="cu-item {{index==TabCur?'text-blue cur':''}}" wx:for="{{7}}" wx:key="index" bindtap="tabSelect"
+				data-id="{{index}}">
+				周{{index+1}}
+			</view>
+		</scroll-view> -->
+
+
+	<block wx:if="{{fr==''&&user.wxid}}">
+
+		<!-- 悬浮创建按钮 -->
+		<wux-fab-button wx:if="{{setting_info.allow_sub_act}}" position="bottomRight" theme="positive" direction="vertical"
+			reverse="{{ false }}" spaceBetween="10" sAngle="270" eAngle="360" buttons="{{ buttons }}" bind:change="onChange"
+			bind:click="onClick" />
+
+		<!-- 筛选排序栏	 -->
+		<view wx:if="{{filterbar}}">
+			<view>
+				<wux-filterbar items="{{ items }}" bind:change="onChange" bind:open="onOpen" bind:close="onClose" />
+			</view>
+		</view>
+
+
+		<view class="{{filterbar?'top':''}}">
+			<!-- 载入中 -->
+			<view class="page-null" wx:if="{{relateddatas==1}}">
+				<wux-spin nested spinning="{{ relateddatas==1 }}" tip="" wx:if="{{relateddatas==1}}">
+					<view style='height:500rpx'></view>
+				</wux-spin>
+			</view>
+
+			<!-- 空列表 -->
+			<view class="page-null content" wx:if="{{relateddatas==0}}">
+				<wux-prompt class="bg-grcy" visible="{{ 1===1 }}" icon="{{ msg.icon }}" title="{{ msg.title }}"
+					text="{{ msg.text }}" buttons="{{ msg.buttons }}" bind:click="buttonClicked" />
+			</view>
+
+			<!-- 活动列表 -->
+			<view class="" style="padding-bottom:130rpx;" wx:if="{{relateddatas!=1&&relateddatas!=0}}">
+				<block wx:for="{{ relateddatas }}" wx:key="index" class="top" wx:if="{{relateddatas!=1&&relateddatas!=0}}">
+					<view wx:if="{{item.act_mode=='advanced'}}" class="cu-card article {{isCard?'no-card':''}}"
+						bindtap='todetails' data-aid="{{item._id}}">
+						<view class="cu-item shadow" style="margin:15rpx 30rpx;">
+							<view class="title">
+								<view class="text-cut">
+									<view class="cu-tag {{item.status==0?'bg-blue':'bg-red'}} light radius sm margin-right">
+										{{item.status==0?'报名中':'已结束'}}</view>{{item.title}}
+								</view>
+							</view>
+							<view class="content text-grey">
+								<!-- <image src="{{item.group_name=='个人专属'?CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg':'cloud://test-958d13.2fb3-test-958d13-1251176925/logos/7255d08f-7348-4112-8b8a-466f78e845b1.jpg'}}" mode="aspectFill">
+									</image> -->
+								<view class="desc">
+									<view>
+										人数
+										<text style="margin-left:10rpx;">{{item.maximum}}</text>
+										<text style="margin-left:30rpx;"></text>
+										时间
+										<text style="margin-left:10rpx;">{{item.act_time.text+'~'+item.act_time.end_text||''}}</text>
+									</view>
+									<view>
+										地点
+										<text style="margin-left:10rpx;">{{item.location_name}}</text>
+									</view>
+									<!-- <view>
+											费用
+											<text style="margin-left:10rpx;width:100rpx;"
+												wx:if="{{item.price.type==0}}">{{item.price.male_price==item.price.women_price?item.price.male_price+'元':item.price.women_price+'~'+item.price.male_price+'元'}}</text>
+											<text style="margin-left:10rpx;" wx:else>{{item.price.type_text}}</text>
+											<text style="margin-left:30rpx;"></text>
+										</view> -->
+									<view>
+										联系人
+										<text style="margin-left:10rpx;">{{item.contact_info.name}}</text>
+									</view>
+									<view class="flex justify-start margin-top">
+										<view class="cu-tag line-blue light sm radius">{{item.type.name}}</view>
+										<view wx:if="{{item.group_name}}" class="cu-tag line-blue light sm radius" catchtap='toGroupDetail'
+											data-aid="{{item.group_name}}" color="#ff976a" round>
+											<open-data class="padding-fr" type="groupName" default-text="未知微信群"
+												open-gid="{{item.group_name}}">
+											</open-data>
+										</view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+
+					<view wx:if="{{item.act_mode=='simple'||!item.act_mode}}" class="cu-card article {{isCard?'no-card':''}}"
+						bindtap='todetails' data-aid="{{item._id}}">
+
+
+						<view class="cu-card dynamic {{isCard?'no-card':''}}">
+							<view class="cu-item shadow">
+
+								<view class="text-gray text-sm text-left padding">
+									<view class="cu-capsule radius">
+										<view class="cu-tag bg-{{item.status==0&&item.is_active?'blue':'grey'}}">
+											{{item.status==0?(item.is_active?'报名中':(!item.is_active&&item.open_time>cur_time?'待开放':'已截止')):'已取消'}}
+										</view>
+										<view class="cu-tag line-{{item.status==0?'blue':'grey'}}">
+											限{{item.maximum}}人
+										</view>
+									</view>
+									<view wx:if="{{item.location_name}}" class="cu-tag bg-red light sm round margin-left">
+										<text class="cuIcon-locationfill text-orange margin-right-xs"></text>{{item.location_name}}
+									</view>
+								</view>
+
+								<view class="text-content" style="max-height:none;margin-bottom:none;">
+									{{item.decs}}
+								</view>
+
+								<view class="padding text-bold text-lg">
+									<view class="flex justify-between">
+										<view class="text-blue" catchtap='to_room_details' data-roomid="{{item.roomid}}"><text
+												class="cuIcon-weixin text-blue text-lg margin-right-xs"></text>
+											<text class="text-blue">{{rooms_dic[item.roomid].nick||item.roomid||'...'}}</text>
+										</view>
+										<view class="text-gray text-sm flex justify-left">
+											<wux-timeago to="{{ item.create_time }}" lang="{{ zh_CN }}" />
+										</view>
+									</view>
+								</view>
+
+								<view wx:if="{{false}}" class="cu-list menu-avatar comment solids-top">
+									<view class="cu-item">
+										<view class="cu-avatar round"
+											style="background-image:url(https://ossweb-img.qq.com/images/lol/img/champion/Morgana.png);">
+										</view>
+										<view class="content">
+											<view class="text-grey">莫甘娜</view>
+											<view class="text-gray text-content text-df">
+												凯尔，你被自己的光芒变的盲目。
+											</view>
+											<view class="bg-grey padding-sm radius margin-top-sm  text-sm">
+												<view class="flex">
+													<view>凯尔：</view>
+													<view class="flex-sub">妹妹，你在帮他们给黑暗找借口吗?</view>
+												</view>
+											</view>
+											<view class="margin-top-sm flex justify-between">
+												<view class="text-gray text-df">2018年12月4日</view>
+												<view>
+													<text class="cuIcon-appreciatefill text-red"></text>
+													<text class="cuIcon-messagefill text-gray margin-left-sm"></text>
+												</view>
+											</view>
+										</view>
+									</view>
+									<view class="cu-item">
+										<view class="cu-avatar round"
+											style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg);">
+										</view>
+										<view class="content">
+											<view class="text-grey">凯尔</view>
+											<view class="text-gray text-content text-df">
+												妹妹，如果不是为了飞翔，我们要这翅膀有什么用?
+											</view>
+											<view class="bg-grey padding-sm radius margin-top-sm  text-sm">
+												<view class="flex">
+													<view>莫甘娜：</view>
+													<view class="flex-sub">如果不能立足于大地，要这双脚又有何用?</view>
+												</view>
+											</view>
+											<view class="margin-top-sm flex justify-between">
+												<view class="text-gray text-df">2018年12月4日</view>
+												<view>
+													<text class="cuIcon-appreciate text-gray"></text>
+													<text class="cuIcon-messagefill text-gray margin-left-sm"></text>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
+
+							</view>
+						</view>
+
+
+						<!-- <view class="cu-item shadow">
+							<view class="title">
+								<view class="cu-capsule radius">
+									<view class="cu-tag bg-{{item.status==0?'blue':'grey'}}">
+										{{item.status==0?'报名中':'已结束'}}
+									</view>
+									<view class="cu-tag line-{{item.status==0?'blue':'grey'}}">
+										限{{item.maximum}}人
+									</view>
+								</view>
+								<view wx:if="{{item.location_name}}" class="cu-tag bg-red light sm round margin-left"><text
+										class="cuIcon-locationfill text-orange margin-right-xs"></text>{{item.location_name}}</view>
+							</view>
+							<view class="content">
+								<image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg" mode="aspectFill"></image>
+								<view class="desc">
+									<view class="text-content"> {{item.decs}}</view>
+									<view>
+										<view class="cu-tag line-blue light sm round"><text
+												class="cuIcon-weixin text-blue margin-right-xs"></text>{{rooms_dic[item.roomid].nick||item.roomid}}
+										</view>
+
+									</view>
+								</view>
+							</view>
+						</view> -->
+
+					</view>
+				</block>
+			</view>
+		</view>
+	</block>
+
+	<block class="" wx:if="{{fr=='group'}}">
+
+		<!-- 日期tab -->
+		<view class="bg-fff0">
+			<view>
+				<wux-tabs wux-class="bordered bg-fff3" auto="{{ false }}" current="{{ key }}" bindchange="onTabsChange"
+					theme="positive">
+					<block wx:for="{{ tabs }}" wx:key="key">
+						<wux-tab key="{{ item.key }}" title="{{ item.title }}"></wux-tab>
+					</block>
+				</wux-tabs>
+			</view>
+		</view>
+
+		<view class="top">
+			<!-- 初始载入 -->
+			<view class="page-null" wx:if="{{relateddatas==1}}">
+				<wux-spin nested spinning="{{ relateddatas==1 }}" tip="" wx:if="{{relateddatas==1}}">
+					<view style='height:500rpx'></view>
+				</wux-spin>
+			</view>
+
+			<!-- 空列表 -->
+			<view class="page-null" wx:if="{{relateddatas==0}}">
+				<wux-prompt visible="{{ 1===1 }}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}"
+					buttons="{{ msg.buttons }}" bind:click="buttonClicked" />
+			</view>
+
+			<!-- 活动列表 -->
+			<view class="" wx:if="{{relateddatas!=1&&relateddatas!=0}}">
+				<block wx:for="{{ relateddatas }}" wx:key="{{index}}">
+					<view class="cu-card article {{isCard?'no-card':''}}" bindtap='todetails' data-aid="{{item._id}}">
+						<view class="cu-item shadow" style="margin:15rpx 30rpx;">
+							<view class="title">
+								<view class="text-cut">
+									<view class="cu-tag {{item.status==0?'bg-blue':'bg-red'}} light radius sm margin-right">
+										{{item.status==0?'报名中':'已结束'}}</view>{{item.title}}
+								</view>
+							</view>
+							<view class="content text-grey">
+								<!-- <image src="{{item.group_name=='个人专属'?CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg':'cloud://test-958d13.2fb3-test-958d13-1251176925/logos/7255d08f-7348-4112-8b8a-466f78e845b1.jpg'}}" mode="aspectFill">
+															</image> -->
+								<view class="desc">
+									<view>
+										人数
+										<text style="margin-left:10rpx;">{{item.maximum}}</text>
+										<text style="margin-left:30rpx;"></text>
+										时间
+										<text style="margin-left:10rpx;">{{item.act_time.text+'~'+item.act_time.end_text||''}}</text>
+									</view>
+									<view>
+										地点
+										<text style="margin-left:10rpx;">{{item.location_name}}</text>
+									</view>
+									<!-- <view>
+																	费用
+																	<text style="margin-left:10rpx;width:100rpx;"
+																		wx:if="{{item.price.type==0}}">{{item.price.male_price==item.price.women_price?item.price.male_price+'元':item.price.women_price+'~'+item.price.male_price+'元'}}</text>
+																	<text style="margin-left:10rpx;" wx:else>{{item.price.type_text}}</text>
+																	<text style="margin-left:30rpx;"></text>
+																</view> -->
+									<view>
+										联系人
+										<text style="margin-left:10rpx;">{{item.contact_info.name}}</text>
+									</view>
+									<view class="flex justify-start margin-top">
+										<view class="cu-tag line-blue light sm radius">{{item.type.name}}</view>
+										<view wx:if="{{item.group_name}}" class="cu-tag line-blue light sm radius" catchtap='toGroupDetail'
+											data-aid="{{item.group_name}}" color="#ff976a" round>
+											<open-data class="padding-fr" type="groupName" default-text="未知微信群"
+												open-gid="{{item.group_name}}">
+											</open-data>
+										</view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</block>
+			</view>
+
+		</view>
+	</block>
+
+</view>

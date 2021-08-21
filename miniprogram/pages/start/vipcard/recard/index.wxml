@@ -1,0 +1,97 @@
+<view class="page">
+  <view class="cu-card case no-card">
+    <view class="cu-item shadow">
+      <view class="cu-list menu-avatar">
+        <view class="cu-item">
+          <view class="cu-avatar round lg" style="background-image:url({{member_info.avatar.remoteUrl}});"></view>
+          <view class="content flex-sub">
+            <view class="text-grey">{{member_info.nick||'匿名'}}</view>
+            <view class="text-gray text-sm flex justify-between">
+              <view class="cu-tag bg-blue light round">{{room.nick||member_info.roomid}}
+              </view>
+              <view class="text-gray text-sm">
+                参加群活动{{total_count||0}}次
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- 全部订单 -->
+
+  <block wx:for="{{ orders }}" wx:key="index" class="top" wx:if="{{orders!=1&&orders!=0}}">
+    <view class="cu-card article {{isCard?'no-card':''}}" bindtap='todetails' data-aid="{{item.act_id}}">
+
+      <view class=" cu-item shadow" style="margin:15rpx 30rpx;">
+        <!-- <view class="title text-lg">
+          <text class="cuIcon-weixin text-blue text-lg margin-right-xs"></text>
+          <text class="text-blue">{{rooms_dic[item.roomid].nick||item.roomid||'...'}}</text>
+        </view> -->
+        <view class="content text-grey">
+          <view class="desc margin-top">
+            <view>
+              {{item.act_decs}}
+            </view>
+
+            <view class="flex justify-between margin-top">
+              <view class="cu-capsule radius">
+                <view class="cu-tag bg-blue">
+                  已报
+                </view>
+                <view class="cu-tag line-blue">
+                  1人
+                </view>
+              </view>
+              <view class="cu-tag bg-grey light round margin-left"><text
+                  class="cuIcon-timefill text-gray margin-right-xs"></text>{{item.utc_time}}
+              </view>
+            </view>
+
+          </view>
+        </view>
+      </view>
+
+
+
+    </view>
+  </block>
+
+  <!-- <view class="sub-title margin-top">全部账单</view> -->
+  <van-cell-group wx:if="{{datas!=1&&datas!=0&&0}}">
+    <van-cell wx:for="{{datas}}" wx:key="{{index}}" title="{{item.act_snapshot.title}}" value="" size="large"
+      use-label-slot border="{{ true }}" bindtap='todetails' data-aid="{{item.act_id}}">
+      <view slot="label">
+        <wux-white-space body-style="height: 10rpx;background-color: #fff" />
+        <view>
+          <text>扣款 </text>
+          <text style="margin-left:10rpx;font-size:24rpx;color:#ef473a">￥{{item.order_amount}}</text>
+          <text style="margin-left:30rpx;"></text>
+        </view>
+        <wux-white-space body-style="height: 10rpx;background-color: #fff" />
+        <view>
+          <van-icon name="friends-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+            size="10" />
+          <text
+            style="margin-left:10rpx;font-size:24rpx;">男{{item.order_items[0].num}}人,女{{item.order_items[1].num}}人</text>
+          <text style="margin-left:30rpx;"></text>
+          <van-icon name="location-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+            size="10" />
+          <text style="margin-left:10rpx;font-size:24rpx;">{{item.act_snapshot.location_name}}</text>
+        </view>
+      </view>
+    </van-cell>
+  </van-cell-group>
+  <view class="page-null" wx:if="{{datas==1}}">
+    <wux-spin nested spinning="{{ datas==1 }}" tip="" wx:if="{{datas==1}}">
+      <view style='height:300rpx'></view>
+    </wux-spin>
+  </view>
+  <view class="page-null" wx:if="{{datas==0}}">
+    <wux-prompt visible="{{ 1===1 }}" icon="{{ msg2.icon }}" title="{{ msg2.title }}" text="{{ msg2.text }}"
+      buttons="{{ msg2.buttons }}" bind:click="buttonClicked" />
+  </view>
+
+</view>

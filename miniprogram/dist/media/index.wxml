@@ -1,0 +1,13 @@
+<view class="wux-class {{ classes.wrap }}" style="{{outStyle}}">
+  <view class="{{ classes.hd }}">
+    <image class="{{ classes.thumb }}" onerror="imgOnerror" src="{{ thumb }}" mode="scaleToFill" style="{{ extStyle }}" wx:if="{{ thumb }}" />
+  </view>
+  <view class="{{ classes.bd }}">
+    <view class="{{ classes.title }}" wx:if="{{ title }}">
+      <open-data type="groupName" default-text="{{ title }}" open-gid="{{ title }}"></open-data>
+    </view>
+
+    <view class="{{ classes.desc }}" wx:if="{{ label }}">{{ label }}</view>
+    <slot></slot>
+  </view>
+</view>

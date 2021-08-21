@@ -1,0 +1,111 @@
+<!--miniprogram/pages/admin/datas/user.wxml-->
+<view wx:if="{{fr=='user'}}" class="cu-list menu-avatar">
+  <block wx:for="{{users}}" wx:key="index">
+    <view class="cu-item" bindtap="" data-index="{{index}}" data-id="{{item._id}}">
+      <view class="cu-avatar round lg" style="background-image:url({{item.userInfo.avatarUrl}});">
+        <view class="cu-tag badge">99+</view>
+      </view>
+      <view class="content">
+        <view class="text-grey">
+          <text class="text-cut">{{item.userInfo.nickName}}</text>
+          <view class="cu-tag round bg-orange sm">userInfo</view>
+        </view>
+        <view class="text-gray text-sm flex">
+          <text class="text-cut">{{item._openid}}</text>
+        </view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-xs">{{item.userInfo.gender}}</view>
+        <view class="cuIcon-notice_forbid_fill text-gray"></view>
+      </view>
+    </view>
+
+    <block wx:for="{{item.peer_list}}" wx:key="idx" wx:for-item="peer">
+      <view class="cu-item">
+        <view class="cu-avatar radius lg" style="background-image:url({{peer.avatar.remoteUrl}});"></view>
+        <view class="content">
+          <view>
+            <text class="text-cut">{{peer.nickName}}</text>
+            <view class="cu-tag round bg-orange sm">待认证微信</view>
+          </view>
+          <view class="text-gray text-sm flex">
+            <text class="text-cut"> {{peer.wxid}}</text>
+          </view>
+        </view>
+        <view class="action">
+          <view class="text-grey text-xs">{{peer.gender}}</view>
+          <view class="cu-tag round {{item.wait_peer?'bg-red':'bg-gray'}} sm" bindtap="bind" data-index="{{index}}" data-wxid="{{peer.wxid}}" data-openid="{{item._id}}">确认</view>
+        </view>
+      </view>
+    </block>
+
+  </block>
+</view>
+<view wx:if="{{fr=='bot'}}" class="cu-list menu-avatar">
+  <block wx:for="{{bot.contactList}}" wx:key="index">
+    <view class="cu-item" bindtap="" data-index="{{index}}">
+      <view class="cu-avatar round lg" style="background-image:url({{item.payload.avatar}});">
+        <view class="cu-tag badge">{{item.payload.gender==2?'女':'男'}}</view>
+      </view>
+      <view class="content">
+        <view class="text-grey">
+          <text class="text-cut">{{item.payload.name||'未知'}}</text>
+          <view class="cu-tag round bg-orange sm">好友</view>
+        </view>
+        <view class="text-gray text-sm flex">
+          <text class="text-cut">{{item.payload.weixin||item.payload.id}}</text>
+        </view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-xs">{{item.payload.type}}</view>
+        <view class="cuIcon-notice_forbid_fill text-gray"></view>
+      </view>
+    </view>
+  </block>
+  <block wx:for="{{bot.roomList}}" wx:key="index">
+    <view class="cu-item" bindtap="" data-index="{{index}}">
+      <view class="cu-avatar radius lg" style="background-image:url({{item.payload.avatar}});">
+        <!-- <view class="cu-tag badge">{{gender}}</view> -->
+      </view>
+      <view class="content">
+        <view class="text-grey">
+          <text class="text-cut">{{item.payload.topic}}</text>
+          <view class="cu-tag round bg-orange sm">群</view>
+        </view>
+        <view class="text-gray text-sm flex">
+          <text class="text-cut">{{item.payload.id}}/{{item.payload.ownerId}}</text>
+        </view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-xs">{{item.payload.memberIdList.length}}</view>
+        <view class="cuIcon-notice_forbid_fill text-gray"></view>
+      </view>
+    </view>
+  </block>
+</view>
+<view wx:if="{{fr=='room'}}" class="cu-list menu-avatar">
+  <block wx:for="{{rooms}}" wx:key="index">
+    <view class="cu-item" bindtap="" data-index="{{index}}">
+      <view class="cu-avatar radius lg" style="background-image:url({{item.avatar.remoteUrl}});">
+        <!-- <view class="cu-tag badge">{{item.ownerid}}</view> -->
+      </view>
+      <view class="content">
+        <view class="text-grey">
+          <text class="text-cut">{{item.nick}}</text>
+          <view class="cu-tag round bg-orange sm">{{item.roomid}}</view>
+        </view>
+        <view class="text-orange text-sm flex">
+          <text class="text-cut">{{item.ownerid}}</text>
+        </view>
+        <view class="text-gray text-sm flex">
+          <text class="text-cut">{{item.from||'none'}}</text>/
+          <text class="text-cut">{{item.to||'none'}}</text>
+        </view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-xs">{{item.to?item.to.length:0}}</view>
+        <view class="cuIcon-notice_forbid_fill text-gray"></view>
+      </view>
+    </view>
+  </block>
+</view>

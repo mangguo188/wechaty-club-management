@@ -1,0 +1,74 @@
+{
+  "pages": [
+    "pages/start/relatedlist/index",
+    "pages/start/vipcard/index",
+    "pages/start/details/details",
+    "pages/start/usercenter",
+    "pages/start/add/add",
+    "pages/start/vipcard/detail/index",
+    "pages/start/vipcard/cardlist/index",
+    "pages/start/vipcard/setting/index",
+    "pages/start/vipcard/recard/index",
+    "pages/admin/setting/index",
+    "pages/admin/datas/index",
+    "pages/admin/datas/user"
+  ],
+  "window": {
+    "backgroundColor": "#F8F8F8",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarTitleText": "群组大师",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/start/relatedlist/index",
+        "iconPath": "assets/images/iconfont-vip.png",
+        "selectedIconPath": "assets/images/iconfont-vip-active.png",
+        "text": "发现"
+      },
+      {
+        "pagePath": "pages/start/vipcard/index",
+        "iconPath": "assets/images/iconfont-group.png",
+        "selectedIconPath": "assets/images/iconfont-group-active.png",
+        "text": "俱乐部"
+      },
+      {
+        "pagePath": "pages/start/usercenter",
+        "iconPath": "assets/images/iconfont-about1.png",
+        "selectedIconPath": "assets/images/iconfont-about1-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json",
+  "resizable": false,
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于定位当前地点"
+    }
+  },
+  "plugins": {
+    "chooseLocation": {
+      "version": "1.0.2",
+      "provider": "wx76a9a06e5b4e693e"
+    }
+  },
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
+  },
+  "cloud": true
+}

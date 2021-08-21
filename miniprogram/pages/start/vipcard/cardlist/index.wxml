@@ -1,0 +1,149 @@
+<view wx:if="{{false}}">
+  <van-grid column-num="2" border="{{ false }}">
+    <van-grid-item icon="friends" text="会员 {{members.length}} 人" />
+    <van-grid-item icon="gold-coin" text="会费余额 1300.00 元 >" bindtap="" />
+  </van-grid>
+
+  <van-search value="{{ member_name }}" placeholder="会员名" use-action-slot bind:change="onChange" bind:clear="onClear"
+    label="" shape="round">
+    <view slot="action" bindtap="onSearch">搜索</view>
+  </van-search>
+
+  <wux-white-space body-style="height: 10rpx" />
+
+  <wux-spin nested spinning="{{ members_loading }}" tip="" wx:if="{{members_loading}}">
+    <view style='height:600rpx'></view>
+  </wux-spin>
+
+  <view wx:if="{{!members_loading}}" wx:for="{{members}}" wx:key="{{index}}" style="margin-bottom:2rpx">
+
+    <wux-media thumb="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" thumb-style="border-radius: 50%"
+      out-style="background-color: #fff" title="{{item.nick||item.wxid}}"
+      label="余额{{item.balance}}元，活动{{item.total_count}}次，消费{{item.total_consumption}}元，充值{{item.total_recharge}}元">
+      <wux-white-space body-style="height: 10rpx" />
+      <view class="van-card__footer">
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" color="#e42112" round>充值
+        </van-button>
+
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" color="#e42112" round>扣款
+        </van-button>
+
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" round bindtap='todetails'
+          data-index="{{index}}" data-aid="{{item._id}}" data-group_id="{{item.group_id}}">账单</van-button>
+
+        <van-button size="mini" plain custom-class="button" color="#e42112" round>备注</van-button>
+      </view>
+    </wux-media>
+  </view>
+  <view wx:if="{{!members_loading}}" wx:for="{{wx_members}}" wx:key="{{index}}" style="margin-bottom:2rpx">
+
+    <wux-media thumb="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" thumb-style="border-radius: 50%"
+      out-style="background-color: #fff"
+      title="{{item.group_nickname ? '【#'+index+'】'+item.group_nickname:'【#'+index+'】'+'匿名'}}"
+      label="余额{{item.balance}}元，活动{{item.total_count}}次，消费{{item.total_consumption}}元，充值{{item.total_recharge}}元">
+      <wux-white-space body-style="height: 10rpx" />
+      <view class="van-card__footer">
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" color="#e42112" round>充值
+        </van-button>
+
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" color="#e42112" round>扣款
+        </van-button>
+
+        <van-button class="demo-margin-right" size="mini" plain custom-class="button" round bindtap='todetails'
+          data-index="{{index}}" data-aid="{{item._id}}" data-group_id="{{item.group_id}}">账单</van-button>
+
+        <van-button size="mini" plain custom-class="button" color="#e42112" round>备注</van-button>
+      </view>
+    </wux-media>
+  </view>
+
+</view>
+<block>
+  <!-- <view wx:if="{{fr!='add_act'}}" class="cu-bar bg-white search fixed" style="">
+    <view class="search-form round">
+      <text class="cuIcon-search"></text>
+      <input type="text" placeholder="输入搜索的关键词" confirm-type="search"></input>
+    </view>
+    <view class="action">
+      <button class="cu-btn bg-blue shadow-blur round">搜索</button>
+    </view>
+  </view> -->
+  <scroll-view wx:if="{{fr=='add_act'}}" scroll-x class="bg-white nav padding-lr" scroll-with-animation scroll-left="0">
+    <view wx:if="{{checkeds_num>0}}" class="cu-item" style="padding:0rpx;" wx:for="{{checkeds}}" wx:for-index="key"
+      wx:for-item="value">
+      <view class="cu-tag line-blue light sm round " catchtap="">
+        {{value.nick}}</view>
+    </view>
+    <view wx:if="{{checkeds_num==0}}" class="cu-item">
+      <view class="cu-tag line-blue light sm round " catchtap="">
+        未选中任何成员</view>
+    </view>
+  </scroll-view>
+  <scroll-view scroll-y class="indexes" scroll-into-view="indexes-{{listCurID}}"
+    style="height:calc(100vh - {{CustomBar}}rpx);" scroll-with-animation="true" enable-back-to-top="true">
+    <block wx:for="{{members_f}}" wx:key>
+      <view class="padding indexItem-{{members_f[index].title}}" id="indexes-{{members_f[index].title}}"
+        data-index="{{members_f[index].title}}">
+        {{members_f[index].title}}
+      </view>
+      <view class="cu-list menu-avatar no-padding">
+        <view class="cu-item" wx:for="{{members_f[index].datas}}" wx:key wx:for-index="sub" bindtap="do_checked"
+          data-sub="{{sub}}" data-i="{{index}}">
+          <view class="cu-avatar lg radius bg-grey light"
+            style="background-image:url({{members_f[index].datas[sub].member.avatar.remoteUrl}});"></view>
+          <view class="content">
+
+            <view class="text-grey">
+              <checkbox wx:if="{{fr=='add_act'}}" class="round blue sm margin-right-sm"
+                checked="{{members_f[index].datas[sub].checked}}"></checkbox>{{members_f[index].datas[sub].name}}
+            </view>
+            <view class="text-gray text-sm">
+              {{members_f[index].datas[sub].member.wxid}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+  <view class="indexBar" style="height:calc(100vh - {{CustomBar}}px - 50px)">
+    <view class="indexBar-box" bindtouchstart="tStart" bindtouchend="tEnd" catchtouchmove="tMove">
+      <view class="indexBar-item" wx:for="{{members_f}}" wx:key id="{{index}}" bindtouchstart="getCur"
+        bindtouchend="setCur">
+        {{members_f[index].title}}</view>
+    </view>
+  </view>
+  <!--选择显示-->
+  <view hidden="{{hidden}}" class="indexToast">
+    {{listCur}}
+  </view>
+</block>
+<block wx:if="{{fr=='xx'}}">
+  <view class="cu-bar bg-white search fixed" style="">
+    <view class="search-form round">
+      <text class="cuIcon-search"></text>
+      <input disabled type="text" placeholder="输入昵称或微信号" confirm-type="search"></input>
+    </view>
+    <view class="action">
+      <button disabled class="cu-btn bg-blue shadow-blur round">搜索</button>
+    </view>
+  </view>
+  <view class="cu-list grid col-5 {{gridBorder?'':'no-border'}}" style="margin-top:100rpx;">
+    <view class="cu-item  justify-center" wx:for="{{members}}" wx:key>
+      <view class="text-center">
+        <view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar lg radius bg-grey light">
+          {{item.nick[0]||item.wxid[0]}}
+        </view>
+        <view wx:else class="cu-avatar lg radius bg-grey light"
+          style="background-image:url({{item.avatar.remoteUrl}});"></view>
+      </view>
+
+      <!-- <view class="text-gray">
+        <view class="cu-tag badge">
+          <block>认领</block>
+        </view>
+      </view> -->
+      <view class="text-cut text-sm padding-sm text-gray">{{item.nick||item.wxid}}</view>
+      <!-- <text>{{item.nick}}</text> -->
+    </view>
+  </view>
+</block>

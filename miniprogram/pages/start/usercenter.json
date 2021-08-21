@@ -1,0 +1,26 @@
+{
+  "navigationBarTitleText": "个人中心",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "wux-divider": "../../../dist/divider/index",
+    "wux-floating-button": "../../../dist/floating-button/index",
+    "wux-row": "../../../dist/row/index",
+    "wux-col": "../../../dist/col/index",
+    "wux-card": "../../../dist/card/index",
+    "wux-wing-blank": "../../../dist/wing-blank/index",
+    "wux-white-space": "../../../dist/white-space/index",
+    "wux-button": "../../../dist/button/index",
+    "wux-circle": "../../../dist/circle/index",
+    "wux-cell-group": "../../../dist/cell-group/index",
+    "wux-cell": "../../../dist/cell/index",
+    "wux-input-number": "../../../dist/input-number/index",
+    "wux-icon": "../../../dist/icon/index",
+    "wux-avatar": "../../../dist/avatar/index",
+    "wux-tag": "../../../dist/tag/index",
+    "wux-prompt": "../../../dist/prompt/index",
+    "wux-spin": "../../../dist/spin/index",
+    "wux-grids": "../../../dist/grids/index",
+    "wux-grid": "../../../dist/grid/index",
+    "wux-badge": "../../../dist/badge/index"
+  }
+}

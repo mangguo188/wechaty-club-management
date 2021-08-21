@@ -1,0 +1,270 @@
+<wux-backdrop id="wux-backdrop" />
+
+<view class="page">
+	<view class="cu-list menu-avatar">
+		<view class="cu-item">
+			<!-- <view class="cu-avatar round lg"
+				style="background-image:url(https://ossweb-img.qq.com/images/lol/img/champion/Taric.png);">
+				<view class="cu-tag badge">99+</view>
+			</view> -->
+			<view wx:if="{{!room.avatar||!room.avatar.remoteUrl}}" class="cu-avatar bg-blue lg round">
+				{{room.nick[0]||'匿'}}
+				<view bindtap="set_vip" wx:if="{{openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-tag badge">
+					{{room.is_vip?'VIP':'开通'}}
+				</view>
+			</view>
+			<view wx:else class="cu-avatar round lg" style="background-image:url({{room.avatar.remoteUrl}});">
+				<view bindtap="set_vip" wx:if="{{openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-tag badge">
+					{{room.is_vip?'VIP':'开通'}}
+				</view>
+			</view>
+			<view class="content">
+				<view class="text-blue">
+					<text class="text-cut">{{room.nick||room.roomid}}</text>
+					<!-- <view class="cu-tag round bg-orange sm">{{room.ownerid}}</view> -->
+				</view>
+				<view class="text-gray text-sm flex">
+					<text class="text-cut">{{room.ownerid}}</text>
+				</view>
+			</view>
+			<view class="action" bindtap="to_setting">
+				<view class="text-grey text-xs">设置</view>
+				<view class="cuIcon-settings text-gray"></view>
+			</view>
+		</view>
+	</view>
+
+	<!-- <view
+		class="cu-list grid col-{{(!user.wxid?2:(member_info?((room. ownerid&&room. ownerid==user.wxid)||!room. ownerid?3:2):2))}}"
+		style="margin-top:0rpx;"> -->
+
+	<view class="cu-list grid col-4 no-border" style="margin-top:0rpx;">
+
+		<view wx:if="{{member_info}}" bindtap="to_record" class="cu-item">
+			<view class="cuIcon-newshot text-blue">
+				<view class="cu-tag badge">
+					<block>{{orders_count}}</block>
+				</view>
+			</view>
+			<text>报名记录</text>
+		</view>
+
+		<view class="cu-item" bindtap="to_cardlist">
+			<view class="cuIcon-friend text-blue">
+				<view class="cu-tag badge">
+					<block>{{memberNum}}</block>
+				</view>
+			</view>
+			<text>成员</text>
+		</view>
+		<view bindtap="" class="cu-item">
+			<view class="cuIcon-discover text-blue">
+				<view class="cu-tag badge">
+					<block>即将上线</block>
+				</view>
+			</view>
+			<text>动态</text>
+		</view>
+		<view bindtap="to_add" wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid&&room.boot_open}}"
+			class="cu-item">
+			<view class="cuIcon-add text-blue">
+			</view>
+			<text>发布活动</text>
+		</view>
+		<view bindtap="open_bot" class="cu-item"
+			wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid&&!room.boot_open&&room.is_vip}}">
+			<view class="cuIcon-info text-blue">
+				<view class="cu-tag badge">
+					<block>推荐</block>
+				</view>
+			</view>
+			<text>启用机器人</text>
+		</view>
+		<view bindtap="set_vip" wx:if="{{!room.is_vip&&openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-item">
+			<view class="cuIcon-infofill text-blue">
+			</view>
+			<text>开通VIP</text>
+		</view>
+	</view>
+
+	<wux-notice-bar loop speed="50" mode="link" action="" content="{{room.announce||'暂无公告！'}}" bind:click="onClick">
+	</wux-notice-bar>
+
+	<view class="button-sp-area" wx:if="{{member_info.status==0}}">
+		<wux-popover theme="dark" visible="{{ visible }}" bodyStyle='top:70rpx;left:598rpx;' controlled
+			placement="bottomRight" title="" bind:change="{{iscreator?'onChange':'to_setting'}}">
+			<view slot="content" style="padding:20rpx">
+				<view wx:for="{{buttons}}" wx:key="{{index}}" class="padding-10px" bindtap="on_click" data-index="{{index}}">
+					{{item.name}}
+				</view>
+			</view>
+			<van-icon size='24px' color="#ef473a" name="setting-o" />
+			<!-- <wux-icon color="#444" fontSize='16px' type="ios-add-circle-outline" /> -->
+		</wux-popover>
+	</view>
+
+
+	<view class="sub-title margin-top">群活动</view>
+	<view class="page-null" wx:if="{{activities==1}}">
+		<wux-spin nested spinning="{{ activities==1 }}" tip="" wx:if="{{activities==1}}">
+			<view style='height:600rpx'></view>
+		</wux-spin>
+	</view>
+
+	<view class="page-null" wx:if="{{activities==0}}">
+		<!-- <wux-white-space body-style="height: 30rpx" /> -->
+		<wux-prompt visible="{{ 1===1 }}" icon="{{ msg2.icon }}" title="{{ msg2.title }}" text="{{ msg2.text }}"
+			buttons="{{iscreator?msg2.buttons:''}}" bind:click="createact" />
+	</view>
+
+	<block wx:if="{{activities!=1&&activities!=0}}">
+
+
+		<view>
+
+			<view class="" wx:if="{{filterbar}}">
+
+
+				<view>
+					<!-- 筛选和排序栏 -->
+					<wux-filterbar items="{{ items }}" bind:change="onChange" bind:open="onOpen" bind:close="onClose" />
+				</view>
+			</view>
+
+			<view class="top">
+
+				<!-- <view class="sub-title">全部活动记录</view> -->
+				<view>
+					<view class="page-null" wx:if="{{activities==1}}">
+						<wux-spin nested spinning="{{ activities==1 }}" tip="" wx:if="{{activities==1}}">
+							<view style='height:500rpx'></view>
+						</wux-spin>
+					</view>
+					<view class="page-null" wx:if="{{activities==0}}">
+						<wux-prompt visible="{{ 1===1 }}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}"
+							buttons="{{ msg.buttons }}" bind:click="buttonClicked" />
+					</view>
+
+					<view class="top" wx:if="{{activities!=1&&activities!=0}}">
+
+						<block wx:for="{{ activities }}" wx:key="index" class="top" wx:if="{{activities!=1&&activities!=0}}">
+
+							<view wx:if="{{item.act_mode=='advanced'}}" class="cu-card article {{isCard?'no-card':''}}"
+								bindtap='todetails' data-aid="{{item._id}}">
+								<view class="cu-item shadow" style="margin:15rpx 30rpx;">
+									<view class="title">
+										<view class="text-cut">
+											<view class="cu-tag {{item.status==0?'bg-blue':'bg-red'}} light radius sm margin-right">
+												{{item.status==0?(item.is_active?'报名中':'已截止'):'已取消'}}
+											</view>{{item.title}}
+										</view>
+									</view>
+									<view class="content text-grey">
+										<!-- <image src="{{item.group_name=='个人专属'?CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg':'cloud://test-958d13.2fb3-test-958d13-1251176925/logos/7255d08f-7348-4112-8b8a-466f78e845b1.jpg'}}" mode="aspectFill">
+																					</image> -->
+										<view class="desc">
+											<view>
+												人数
+												<text style="margin-left:10rpx;">{{item.maximum}}</text>
+												<text style="margin-left:30rpx;"></text>
+												时间
+												<text style="margin-left:10rpx;">{{item.act_time.text+'~'+item.act_time.end_text||''}}</text>
+											</view>
+											<view>
+												地点
+												<text style="margin-left:10rpx;">{{item.location_name}}</text>
+											</view>
+											<!-- <view>
+																							费用
+																							<text style="margin-left:10rpx;width:100rpx;"
+																								wx:if="{{item.price.type==0}}">{{item.price.male_price==item.price.women_price?item.price.male_price+'元':item.price.women_price+'~'+item.price.male_price+'元'}}</text>
+																							<text style="margin-left:10rpx;" wx:else>{{item.price.type_text}}</text>
+																							<text style="margin-left:30rpx;"></text>
+																						</view> -->
+											<view wx:if="{{item.contact_info&&item.contact_info.name}}">
+												联系人
+												<text style="margin-left:10rpx;">{{item.contact_info.name}}</text>
+											</view>
+											<view class="flex justify-start margin-top">
+
+												<view wx:if="{{item.is_cycle}}" class="cu-tag line-red light sm radius">固定活动</view>
+												<view class="cu-tag line-blue light sm radius">{{item.type.name}}</view>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+
+							<view wx:if="{{item.act_mode=='simple'}}" class="cu-card article {{isCard?'no-card':''}}">
+								<view class="cu-item shadow" style="margin:15rpx 30rpx;">
+									<view class="title">
+										<view class="text-cut">
+											<view wx:if="{{item.maximum}}" class="cu-capsule radius">
+												<view class="cu-tag bg-{{item.status==0&&item.is_active?'blue':'grey'}}">
+													{{item.status==0?(item.is_active?'报名中':(!item.is_active&&item.open_time>cur_time?'待开放':'已截止')):'已取消'}}
+												</view>
+												<view class="cu-tag line-{{item.status==0?'blue':'grey'}}">
+													限{{item.maximum}}人
+												</view>
+											</view>
+											<view wx:if="{{!item.maximum}}" class="cu-capsule radius">
+												<view class="cu-tag bg-{{item.status==0?'blue':'grey'}}">
+													{{item.act_type}}
+												</view>
+												<view class="cu-tag line-{{item.status==0?'blue':'grey'}}">
+													{{item.nickName||item.wxid}}
+												</view>
+											</view>
+											<view wx:if="{{item.location_name}}" class="cu-tag bg-red light sm round margin-left">
+												<text class="cuIcon-locationfill text-orange margin-right-xs"></text>{{item.location_name}}
+											</view>
+											<view wx:if="{{item.utc_time}}" class="cu-tag text-grey light sm round margin-left"><text
+													class="cuIcon-timefill text-grey margin-right-xs"></text>
+												<wux-timeago to="{{ item.create_time }}" lang="{{ zh_CN }}" />
+											</view>
+										</view>
+									</view>
+									<view class="content text-grey">
+										<!-- <image src="{{item.group_name=='个人专属'?CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg':'cloud://test-958d13.2fb3-test-958d13-1251176925/logos/7255d08f-7348-4112-8b8a-466f78e845b1.jpg'}}" mode="aspectFill">
+																					</image> -->
+										<view class="desc">
+											<view bindtap='todetails' data-aid="{{item._id}}">{{item.decs}}</view>
+
+											<view class="flex justify-start margin-top">
+												<!-- <view wx:if="{{item.roomid&&item.act_type=='活动'}}"
+													class="cu-tag line-red light sm radius margin-right">
+													群内机器人报名</view> -->
+												<view wx:if="{{item.utc_time}}" class="cu-tag bg-grey light sm round margin-right">
+													<text class="cuIcon-timefill margin-right-xs"></text>{{item.utc_time}}
+												</view>
+												<view wx:else class="cu-tag light sm round margin-right"><text
+														class="cuIcon-timefill text-grey margin-right-xs"></text>
+													<wux-timeago to="{{ item.create_time }}" lang="{{ zh_CN }}" />
+												</view>
+												<view wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid}}"
+													class="cu-tag line-grey light sm round margin-right" catchtap="" data-index="{{index}}">
+													删除</view>
+												<view wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid&&item.remarks}}"
+													class="cu-tag bg-blue light sm round" catchtap="copy_and_add" data-index="{{index}}">
+													复制并再次发布</view>
+											</view>
+
+
+										</view>
+									</view>
+								</view>
+							</view>
+
+
+
+						</block>
+					</view>
+
+
+				</view>
+
+			</view>
+		</view>
+	</block>
+
+</view>

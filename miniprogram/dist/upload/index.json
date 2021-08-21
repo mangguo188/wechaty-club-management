@@ -1,0 +1,4 @@
+{
+  "component": true,
+  "wux-actionsheet": "../dist/actionsheet/index"
+}

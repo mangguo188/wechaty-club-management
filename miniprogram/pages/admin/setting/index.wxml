@@ -1,0 +1,39 @@
+<!--miniprogram/pages/admin/setting/index.wxml-->
+
+<wux-calendar id="wux-calendar" />
+<wux-toptips id="wux-toptips" />
+<wux-select id="wux-select1" />
+
+
+<view class="page" style=''>
+<van-action-sheet show="{{ show_set_version }}" actions="{{ all_version }}" cancel-text="取消" bind:close="toggleActionSheet" bind:cancel="toggleActionSheet" bind:select="select_one" />
+
+  <van-cell-group title="版本">
+    <van-cell title="系统版本" bindtap="set_version">
+      v{{setting_info.version}}
+    </van-cell>
+  </van-cell-group>
+
+  <van-cell-group title="入口">
+    <van-cell title="俱乐部列表">
+      <van-switch checked="{{ setting_info.show_club_portal }}" bind:change="onChange" data-action="show_club_portal" />
+    </van-cell>
+    <van-cell title="发布活动">
+      <van-switch checked="{{ setting_info.allow_sub_act }}" bind:change="onChange" data-action="allow_sub_act" />
+    </van-cell>
+  </van-cell-group>
+
+  <van-cell-group title="功能">
+    <van-cell title="创建俱乐部">
+      <van-switch checked="{{ setting_info.allow_add_club }}" bind:change="onChange" data-action="allow_add_club" />
+    </van-cell>
+  </van-cell-group>
+  <!-- <van-cell-group title="个人设置">
+    <van-cell title="会员显示名" is-link url="/pages/dashboard/index" value="张三" />
+    <van-cell title="联系电话" is-link url="/pages/dashboard/index" value="133800001230" />
+    <wux-white-space body-style="height: 20rpx" />
+    <van-cell title="退出俱乐部" is-link url="/pages/dashboard/index" />
+  </van-cell-group> -->
+
+
+</view>

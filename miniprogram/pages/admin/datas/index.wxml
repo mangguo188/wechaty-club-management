@@ -1,0 +1,27 @@
+<!--miniprogram/pages/admin/datas/index.wxml-->
+<view class="cu-list menu card-menu margin-bottom-xl shadow-lg radius margin-top">
+  <view class="cu-item arrow">
+    <navigator class="content" url="/pages/admin/datas/user?fr=user" hover-class="none">
+      <text class="cuIcon-settingsfill text-blue"></text>
+      <text class="text-grey">用户认证审核</text>
+    </navigator>
+  </view>
+  <view class="cu-item arrow">
+    <navigator class="content" url="" hover-class="none">
+      <text class="cuIcon-questionfill text-blue"></text>
+      <text class="text-grey">活动管理</text>
+    </navigator>
+  </view>
+  <view class="cu-item arrow">
+    <navigator class="content" url="/pages/admin/datas/user?fr=bot" hover-class="none">
+      <text class="cuIcon-questionfill text-blue"></text>
+      <text class="text-grey">机器人</text>
+    </navigator>
+  </view>
+  <view class="cu-item arrow">
+    <navigator class="content" url="/pages/admin/datas/user?fr=room" hover-class="none">
+      <text class="cuIcon-questionfill text-blue"></text>
+      <text class="text-grey">群管理</text>
+    </navigator>
+  </view>
+</view>

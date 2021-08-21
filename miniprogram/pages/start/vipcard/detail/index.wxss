@@ -1,0 +1,102 @@
+/* miniprogram/pages/start/vipcard/detail/index.wxss */
+
+.page {
+  height: 100%;
+  background-color: #F8F8F8;
+}
+
+.sub-title {
+  padding: 0rpx 30rpx;
+  font-size: 28rpx;
+  color: #888;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.image {
+  width: 100% !important;
+  height: auto !important;
+  padding-bottom: 100% !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.button-sp-area {
+  display: block;
+  position: fixed;
+  z-index: 1500;
+  right: 30rpx;
+  top: 20rpx;
+  margin: 0;
+  width: 100%;
+  text-align: right;
+}
+
+.padding-10px {
+  padding: 20rpx 10rpx;
+}
+
+/* pages/start/list/list.wxss */
+
+.page {
+  background-color: #F8F8F8;
+}
+
+.page-null {
+  margin: 100rpx 0rpx 0rpx 0rpx;
+}
+
+.bg-fff2 {
+  padding: 0rpx;
+  text-align: center;
+  position: fixed;
+  top: 128rpx;
+  z-index: 999;
+  width: 100%;
+  background-color: #F8F8F8;
+}
+
+.bg-fff0 {
+  padding: 0rpx;
+  position: fixed;
+  top: 0rpx;
+  z-index: 999;
+  width: 100%;
+  background-color: #F8F8F8;
+}
+
+.bg-fff {
+  padding: 0rpx 10%;
+  text-align: center;
+}
+
+.bg-fff3 {
+  background-color: #F8F8F8;
+}
+
+.top {
+  margin-top: 0rpx;
+  /* margin-top: 228rpx; */
+}
+
+.container {
+  /* height: 100vh; */
+  background-color: #F8F8F8;
+}
+
+.tag,
+.button {
+  margin-right: 10rpx;
+  margin-top: 5rpx;
+  margin-bottom: 5rpx;
+}
+
+.van-card__footer {
+  margin-top: 5px;
+}
+
+.text-gray {
+  color: #666666;
+}

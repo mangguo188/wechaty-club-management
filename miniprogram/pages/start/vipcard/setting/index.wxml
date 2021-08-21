@@ -1,0 +1,115 @@
+<wux-calendar id="wux-calendar" />
+<wux-toptips id="wux-toptips" />
+<wux-select id="wux-select1" />
+
+
+<view class="page" style=''>
+
+  <block wx:if="{{user.wxid==room.ownerid}}">
+    <!-- <view class="cu-bar bg-white solid-bottom">
+      <view class="action">
+        <text class="cuIcon-title text-blue "></text> 群设置
+      </view>
+      <view class="action">
+      </view>
+    </view> -->
+    <view class="cu-list menu margin-bottom {{menuBorder?'sm-border':''}} {{menuCard?'card-menu margin-top':''}}">
+
+      <view class="cu-item {{menuArrow?'arrow':''}}">
+        <view class="content">
+          <text class="text-grey">群名称</text>
+        </view>
+        <view class="action">
+          <view class="cu-avatar-group">
+            <view class="cu-avatar round sm" style="background-image:url({{room.avatar.remoteUrl}});"></view>
+          </view>
+          <text class="text-grey text-sm">{{room.nick}}</text>
+        </view>
+      </view>
+
+      <!-- <view class="cu-item {{menuArrow?'arrow':''}}">
+      <navigator class="content" hover-class="none" url="../list/list" open-type="redirect">
+        <text class="text-grey">Navigator 跳转</text>
+      </navigator>
+    </view>
+
+    <view class="cu-item {{menuArrow?'arrow':''}}">
+      <view class="content">
+        <text class="text-grey">标签</text>
+      </view>
+      <view class="action">
+        <view class="cu-tag round bg-orange light">音乐</view>
+        <view class="cu-tag round bg-olive light">电影</view>
+        <view class="cu-tag round bg-blue light">旅行</view>
+      </view>
+    </view> -->
+
+      <view class="cu-item">
+        <view class="content padding-tb-sm">
+          <view>
+            <text class="text-grey">开启机器人</text>
+          </view>
+          <view class="text-gray text-sm">
+            <text class="cuIcon-infofill margin-right-xs"></text>
+            {{room.is_vip?(room.boot_open?'已开启，可在群内使用指令报名活动':'未开启，开启后可在群内使用指令报名活动'):'未获得机器人资格，请添加微信ledongmao'}}</view>
+        </view>
+        <view class="action">
+          <switch disabled="{{!room.is_vip}}" class="sm blue" bindchange="open_bot" checked="{{room.boot_open}}"></switch>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block>
+    <!-- <view class="cu-bar bg-white solid-bottom">
+      <view class="action">
+        <text class="cuIcon-title text-blue "></text> 会员信息
+      </view>
+      <view class="action">
+      </view>
+    </view> -->
+    <view class="cu-list menu margin-bottom {{menuBorder?'sm-border':''}} {{menuCard?'card-menu margin-top':''}}">
+      <view class="cu-item {{menuArrow?'arrow':''}}">
+        <navigator class="content" hover-class="none" url="/pages/dashboard/index" open-type="redirect">
+          <text class="text-grey">会员显示名</text>
+        </navigator>
+        <view class="action">
+          <text class="text-grey text-sm">{{member_info.alias||member_info.nick}}</text>
+        </view>
+      </view>
+
+      <view class="cu-item {{menuArrow?'arrow':''}}">
+        <navigator class="content" hover-class="none" url="/pages/dashboard/index" open-type="redirect">
+          <text class="text-grey">联系电话</text>
+        </navigator>
+        <view class="action">
+          <text class="text-grey text-sm">{{user.cellphone||'未设置'}}</text>
+        </view>
+      </view>
+
+      <view class="cu-item {{menuArrow?'arrow':''}}">
+        <view class="content padding-tb-sm">
+          <view>
+            <text class="text-grey">开启通知推送</text>
+          </view>
+          <view class="text-gray text-sm">
+            <text class="cuIcon-infofill margin-right-xs"></text> 开启后可接收小程序消息通知</view>
+        </view>
+        <view class="action">
+          <switch class="blue sm" bindchange="" disabled="{{true}}"></switch>
+        </view>
+      </view>
+
+      <view class="cu-item {{menuArrow?'arrow':''}}" wx:if="{{iscreator=='false'}}">
+        <view class="content">
+          <text class="text-grey">退出俱乐部</text>
+        </view>
+        <view class="action" bindtap="to_quit">
+          <button class="cu-btn round bg-red shadow">
+            <text class="cuIcon-upload"></text> 退出</button>
+        </view>
+      </view>
+
+    </view>
+  </block>
+</view>
