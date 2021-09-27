@@ -574,10 +574,7 @@ exports.main = async (event, context) => {
 
       let msg = ''
 
-      if ((/报名\d人成功!/g.test(content.replace(/\s*/g, "")) || /取消\d人成功!/g.test(content.replace(/\s*/g, ""))) && !['wxid_0o1t51l3f57221', ].includes(wxid)) {
-        msg = '复制粘贴报名无效！请直接回复 报名 或 报名2人 完成报名~'
-        req = get_req(wxKey, 'Text', msg, roomid, wxid)
-      } else if (content.replace(/\s*/g, "") == '帮助') {
+      if (content.replace(/\s*/g, "") == '帮助') {
         let keywords_base = {
           '【报名】': '报名活动1人',
           '【取消】': '取消报名1人',

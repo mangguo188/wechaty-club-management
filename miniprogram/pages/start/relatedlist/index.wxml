@@ -182,7 +182,7 @@
 									<view class="flex justify-between">
 										<view class="text-blue" catchtap='to_room_details' data-roomid="{{item.roomid}}"><text
 												class="cuIcon-weixin text-blue text-lg margin-right-xs"></text>
-											<text class="text-blue">{{rooms_dic[item.roomid].nick||item.roomid||'...'}}</text>
+											<text class="text-blue">{{rooms_dic[item.roomid].topic||item.roomid||'...'}}</text>
 										</view>
 										<view class="text-gray text-sm flex justify-left">
 											<wux-timeago to="{{ item.create_time }}" lang="{{ zh_CN }}" />
