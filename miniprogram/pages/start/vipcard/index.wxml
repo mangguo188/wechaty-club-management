@@ -36,29 +36,18 @@
 				<view class="padding">你尚未完成注册，点击按钮完成会员认证激活~</view>
 			</view>
 		</view> -->
-			<view class="padding text-center">
-				<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
-					<view class="padding text-xxl">
-						<button disabled class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
-							登陆激活
-						</button>
-					</view>
-					<view class="padding">你尚未完成激活，进入【发现】页面激活~</view>
+		<view class="padding text-center">
+			<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
+				<view class="padding text-xxl">
+					<button disabled class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
+						登陆激活
+					</button>
 				</view>
+				<view class="padding">你尚未完成激活，进入【发现】页面激活~</view>
 			</view>
+		</view>
 	</block>
-	<block wx:if="{{user.userInfo&&user.userInfo.nickName&&user.wxid}}">
-
-		<!-- <view class="cu-bar search bg-white">
-			<view class="search-form round">
-				<text class="cuIcon-search"></text>
-				<input type="text" placeholder="搜索群组" confirm-type="search"></input>
-			</view>
-			<view class="action">
-				<button class="cu-btn bg-blue shadow-blur round">搜索</button>
-			</view>
-		</view> -->
-
+	<block wx:if="{{user.wxid}}">
 		<!-- 加载 -->
 		<view class="page-null bg-bg-white" wx:if="{{!groups_is_done}}">
 			<wux-spin nested spinning="{{ !groups_is_done }}" tip="">
@@ -88,7 +77,7 @@
 					<view class="cu-item cur" wx:for="{{owner_rooms}}" wx:key="index" bindtap="to_room_details"
 						data-index="{{index}}" data-id="{{item._id}}">
 						<view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar bg-blue lg radius">
-							{{item.nick[0]||'匿'}}
+							{{item.topic[0]||'匿'}}
 							<view wx:if="{{item.is_vip}}" class="cu-tag badge">VIP</view>
 						</view>
 						<view wx:else class="cu-avatar radius lg" style="background-image:url({{item.avatar.remoteUrl}});">
@@ -97,7 +86,7 @@
 						<view class="content">
 							<view>
 								<view class="text-cut">
-									{{item.nick||item._id}}
+									{{item.topic||item._id}}
 								</view>
 								<!-- <view class="cu-tag round bg-orange sm">6人</view> -->
 							</view>
@@ -111,7 +100,8 @@
 							<view wx:if="{{item.announce}}" class="text-gray text-sm flex">
 								<view class="text-cut text-gray">
 									<!-- <text class="cuIcon-weixin text-green margin-right-xs"></text> -->
-									{{item.announce}}</view>
+									{{item.announce}}
+								</view>
 							</view>
 						</view>
 						<view wx:if="{{item.is_vip}}" class="action">
@@ -140,7 +130,7 @@
 					<view class="cu-item cur" wx:for="{{owner_rooms}}" wx:key="index" bindtap="to_room_details"
 						data-index="{{index}}" data-id="{{item._id}}">
 						<view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar bg-blue lg radius">
-							{{item.nick[0]||'匿'}}
+							{{item.topic[0]||'匿'}}
 							<view wx:if="{{item.is_vip}}" class="cu-tag badge">VIP</view>
 						</view>
 						<view wx:else class="cu-avatar radius lg" style="background-image:url({{item.avatar.remoteUrl}});">
@@ -149,7 +139,7 @@
 						<view class="content">
 							<view>
 								<view class="text-cut">
-									{{item.nick||item._id}}
+									{{item.topic||item._id}}
 								</view>
 								<!-- <view class="cu-tag round bg-orange sm">6人</view> -->
 							</view>
@@ -160,7 +150,8 @@
 							<view wx:if="{{item.announce}}" class="text-gray text-sm flex">
 								<view class="text-cut text-gray">
 									<!-- <text class="cuIcon-weixin text-green margin-right-xs"></text> -->
-									{{item.announce}}</view>
+									{{item.announce}}
+								</view>
 							</view>
 							<!-- <view class="text-gray text-sm flex">
 							<text class="cuIcon-weixin text-green margin-right-xs"></text>
@@ -194,7 +185,7 @@
 					<view class="cu-item cur" wx:for="{{rooms}}" wx:key="index" bindtap="to_room_details" data-index="{{index}}"
 						data-id="{{item._id}}">
 						<view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar bg-blue lg radius">
-							{{item.nick[0]||'匿'}}
+							{{item.topic[0]||'匿'}}
 							<view wx:if="{{item.is_vip}}" class="cu-tag badge">VIP</view>
 						</view>
 						<view wx:else class="cu-avatar radius lg" style="background-image:url({{item.avatar.remoteUrl}});">
@@ -204,7 +195,7 @@
 						<view class="content">
 							<view>
 								<view class="text-cut">
-									{{item.nick||item._id}}
+									{{item.topic||item._id}}
 								</view>
 								<!-- <view class="cu-tag round bg-orange sm">6人</view> -->
 							</view>
@@ -219,7 +210,8 @@
 							<view wx:if="{{item.announce}}" class="text-gray text-sm flex">
 								<view class="text-cut text-gray">
 									<!-- <text class="cuIcon-weixin text-green margin-right-xs"></text> -->
-									{{item.roomid}}/{{item.announce}}</view>
+									{{item.roomid}}/{{item.announce}}
+								</view>
 							</view>
 						</view>
 						<view wx:if="{{item.is_vip}}" class="action">
@@ -275,12 +267,12 @@
 			<view class="cu-item cur" wx:for="{{groups_info}}" wx:key="index" bindtap="to_room_details"
 				data-index="{{index}}">
 				<view class="cu-avatar bg-blue lg radius">
-					{{item.nick[0]||item.name[0]||'匿'}}
+					{{item.topic[0]||item.name[0]||'匿'}}
 				</view>
 				<view class="content">
 					<view>
 						<view class="text-cut">
-							{{item.nick||item.wxid||item.name}}
+							{{item.topic||item.wxid||item.name}}
 						</view>
 					</view>
 					<open-data slot='title' class="padding-fr" type="groupName" default-text="你已退出此群"

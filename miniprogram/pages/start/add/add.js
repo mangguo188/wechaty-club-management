@@ -967,8 +967,6 @@ Page({
     var that = this
     if (!that.data.params.group_name) {
       that.showToptips('请选择一个群')
-    } else if (!that.data.params.location_name) {
-      that.showToptips('活动地点必选')
     } else if (!that.data.params.title) {
       that.showToptips('活动名称必填')
     } else if (!that.data.params.decs) {
@@ -1108,7 +1106,7 @@ Page({
     simple_params.act_type = '活动'
     if (that.data.room) {
       simple_params.roomid = that.data.room._id
-      simple_params.roomnick = that.data.room.nick
+      simple_params.roomnick = that.data.room.topic
       simple_params.ownerid = that.data.room.ownerid
     }
 
@@ -1137,8 +1135,6 @@ Page({
       that.showToptips('描述必须大于4个字')
     } else if (!simple_params.maximum) {
       that.showToptips('须设置人数限制')
-    } else if (!simple_params.location_name) {
-      that.showToptips('地点必选')
     } else
     if (!simple_params.contact_info.name) {
       that.showToptips('联系人必填')
@@ -1150,71 +1146,55 @@ Page({
 
       simple_params.decs = `${simple_params.title}\n${simple_params.location_name}\n限${simple_params.maximum}人\n${simple_params.deadline==0?'':'取消已报名必须提前'+simple_params.deadline+'小时'}\n${simple_params.decs}`
 
-      wx.serviceMarket.invokeService({
-        service: 'wxee446d7507c68b11',
-        api: 'msgSecCheck',
-        data: {
-          "Action": "TextApproval",
-          "Text": that.data.params.decs
-        },
-      }).then(res => {
-        console.log(res)
-        if (res.data.Response.EvilTokens.length > 0) {
-          that.showToptips('内容不合规【' + res.data.Response.EvilTokens[0].EvilKeywords[0] + '】')
-        } else {
+      that.setData({
+        is_adding: true
+      })
 
-          that.setData({
-            is_adding: true
-          })
+      simple_params = util.add_time('c', simple_params)
 
-          simple_params = util.add_time('c', simple_params)
+      db.collection('activity').add({
+        data: simple_params,
+        success: res => {
 
-          db.collection('activity').add({
-            data: simple_params,
-            success: res => {
+          console.log('活动创建成功', res._id)
+          simple_params._id = res._id
 
-              console.log('活动创建成功', res._id)
-              simple_params._id = res._id
-
-              // 更新联系人信息
-              db.collection('user').doc(app.globalData.openid).update({
-                data: {
-                  real_name: simple_params.contact_info.name,
-                  cellphone: simple_params.contact_info.cellphone
-                }
-              }).then(res => {
-                console.debug('更新用户real_name成功')
-              })
-
-              let checkeds = that.data.checkeds
-              if (Object.keys(checkeds).length) {
-                for (let item in checkeds) {
-                  let sign_init = sign_in_act(simple_params, checkeds[item], 1, false, cur_time)
-                  console.debug(sign_init)
-                }
-              }
-
-              // 更新截止报名时间
-              if (simple_params.is_active) {
-                let data = {
-                  is_active: true
-                }
-                that.update_act('update_is_active', res._id, data)
-              }
-
-              // 跳转到详情页
-              wx.redirectTo({
-                url: `/pages/start/details/details?fr=add&&is_active=${simple_params.is_active}&id=${res._id}`
-              })
-            },
-            fail: err => {
-              console.error('接龙活动创建失败', err)
+          // 更新联系人信息
+          db.collection('user').doc(app.globalData.openid).update({
+            data: {
+              real_name: simple_params.contact_info.name,
+              cellphone: simple_params.contact_info.cellphone
             }
+          }).then(res => {
+            console.debug('更新用户real_name成功')
           })
 
+          let checkeds = that.data.checkeds
+          if (Object.keys(checkeds).length) {
+            for (let item in checkeds) {
+              let sign_init = sign_in_act(simple_params, checkeds[item], 1, false, cur_time)
+              console.debug(sign_init)
+            }
+          }
 
+          // 更新截止报名时间
+          if (simple_params.is_active) {
+            let data = {
+              is_active: true
+            }
+            that.update_act('update_is_active', res._id, data)
+          }
+
+          // 跳转到详情页
+          wx.redirectTo({
+            url: `/pages/start/details/details?fr=add&&is_active=${simple_params.is_active}&id=${res._id}`
+          })
+        },
+        fail: err => {
+          console.error('接龙活动创建失败', err)
         }
       })
+
 
 
 

@@ -8,19 +8,19 @@
 				<view class="cu-tag badge">99+</view>
 			</view> -->
 			<view wx:if="{{!room.avatar||!room.avatar.remoteUrl}}" class="cu-avatar bg-blue lg round">
-				{{room.nick[0]||'匿'}}
-				<view bindtap="set_vip" wx:if="{{openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-tag badge">
+				{{room.topic[0]||'匿'}}
+				<view bindtap="set_vip" class="cu-tag badge">
 					{{room.is_vip?'VIP':'开通'}}
 				</view>
 			</view>
 			<view wx:else class="cu-avatar round lg" style="background-image:url({{room.avatar.remoteUrl}});">
-				<view bindtap="set_vip" wx:if="{{openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-tag badge">
+				<view bindtap="set_vip" class="cu-tag badge">
 					{{room.is_vip?'VIP':'开通'}}
 				</view>
 			</view>
 			<view class="content">
 				<view class="text-blue">
-					<text class="text-cut">{{room.nick||room.roomid}}</text>
+					<text class="text-cut">{{room.topic||room.roomid}}</text>
 					<!-- <view class="cu-tag round bg-orange sm">{{room.ownerid}}</view> -->
 				</view>
 				<view class="text-gray text-sm flex">
@@ -65,14 +65,14 @@
 			</view>
 			<text>动态</text>
 		</view>
-		<view bindtap="to_add" wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid&&room.boot_open}}"
+		<view bindtap="to_add" wx:if="{{room.is_vip&&user.wxid&&room.boot_open}}"
 			class="cu-item">
 			<view class="cuIcon-add text-blue">
 			</view>
 			<text>发布活动</text>
 		</view>
 		<view bindtap="open_bot" class="cu-item"
-			wx:if="{{room.is_vip&&user.wxid&&room.ownerid&&room. ownerid==user.wxid&&!room.boot_open&&room.is_vip}}">
+			wx:if="{{room.is_vip&&user.wxid&&!room.boot_open&&room.is_vip}}">
 			<view class="cuIcon-info text-blue">
 				<view class="cu-tag badge">
 					<block>推荐</block>
@@ -80,7 +80,7 @@
 			</view>
 			<text>启用机器人</text>
 		</view>
-		<view bindtap="set_vip" wx:if="{{!room.is_vip&&openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-item">
+		<view bindtap="set_vip" wx:if="{{!room.is_vip}}" class="cu-item">
 			<view class="cuIcon-infofill text-blue">
 			</view>
 			<text>开通VIP</text>

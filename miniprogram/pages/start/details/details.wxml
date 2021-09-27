@@ -235,7 +235,7 @@
 										<!-- <wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
 										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' /> -->
 										<text
-											style="{{index+1>act.maximum?'color:gray;':''}}">{{item.is_bench?('替-'+(item.alias||item.nick)):(item.alias||item.nick)
+											style="{{index+1>act.maximum?'color:gray;':''}}">{{item.is_bench?('替-'+(item.alias||item.topic)):(item.alias||item.topic)
 											}}</text><text wx:if="{{user.wxid==act.ownerid&&is_delete}}" class="margin-right-xs text-gray">
 											{{item.utc_time}}</text><text
 											wx:if="{{user.wxid==act.ownerid&&item.order_amount&&index+1<=act.maximum}}"
@@ -258,7 +258,7 @@
 											src="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" />
 										<wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
 										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' />
-										<text> {{item.alias||item.nick}}</text>
+										<text> {{item.alias||item.topic}}</text>
 										<text wx:if="{{is_owner}}" class="margin-left text-gray"> {{item.create_time_utc}}</text>
 									</view>
 									<!-- <view class="desc_footer">

@@ -18,7 +18,7 @@
   <view wx:if="{{!members_loading}}" wx:for="{{members}}" wx:key="{{index}}" style="margin-bottom:2rpx">
 
     <wux-media thumb="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" thumb-style="border-radius: 50%"
-      out-style="background-color: #fff" title="{{item.nick||item.wxid}}"
+      out-style="background-color: #fff" title="{{item.topic||item.wxid}}"
       label="余额{{item.balance}}元，活动{{item.total_count}}次，消费{{item.total_consumption}}元，充值{{item.total_recharge}}元">
       <wux-white-space body-style="height: 10rpx" />
       <view class="van-card__footer">
@@ -131,7 +131,7 @@
     <view class="cu-item  justify-center" wx:for="{{members}}" wx:key>
       <view class="text-center">
         <view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar lg radius bg-grey light">
-          {{item.nick[0]||item.wxid[0]}}
+          {{item.topic[0]||item.wxid[0]}}
         </view>
         <view wx:else class="cu-avatar lg radius bg-grey light"
           style="background-image:url({{item.avatar.remoteUrl}});"></view>
@@ -142,8 +142,8 @@
           <block>认领</block>
         </view>
       </view> -->
-      <view class="text-cut text-sm padding-sm text-gray">{{item.nick||item.wxid}}</view>
-      <!-- <text>{{item.nick}}</text> -->
+      <view class="text-cut text-sm padding-sm text-gray">{{item.topic||item.wxid}}</view>
+      <!-- <text>{{item.topic}}</text> -->
     </view>
   </view>
 </block>
