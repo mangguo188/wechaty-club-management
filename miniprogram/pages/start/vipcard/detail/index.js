@@ -268,9 +268,9 @@ Page({
     that.onQuery()
 
     if (app.globalData.room) {
-    that.setData({
-      room: app.globalData.room
-    })
+      that.setData({
+        room: app.globalData.room
+      })
     }
 
   },
@@ -279,15 +279,9 @@ Page({
     var that = this
     var cur_time = new Date().getTime()
     db.collection('activity')
-      .where(_.or([{
-          roomid: that.data.roomid,
-          // start_time: _.gte(cur_time)
-        },
-        // {
-        //   group_name: that.data.group_name,
-        //   start_time: _.gte(cur_time)
-        // },
-      ]))
+      .where({
+        roomid: that.data.roomid
+      })
       .orderBy('is_active', 'desc')
       .orderBy('status', 'asc')
       .orderBy('create_time', 'desc')
