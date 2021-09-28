@@ -320,10 +320,10 @@ Page({
   set_vip: async function () {
     let that = this
     let room = that.data.room
-    let content = `确定要为「${room.nick}」开通VIP？`
+    let content = `确定要为「${room.topic}」开通VIP？`
 
     if (room.is_vip) {
-      content = `确定要取消「${room.nick}」的VIP？`
+      content = `确定要取消「${room.topic}」的VIP？`
     }
 
     wx.showModal({

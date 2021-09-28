@@ -23,7 +23,7 @@
           <view class="cu-avatar-group">
             <view class="cu-avatar round sm" style="background-image:url({{room.avatar.remoteUrl}});"></view>
           </view>
-          <text class="text-grey text-sm">{{room.nick}}</text>
+          <text class="text-grey text-sm">{{room.topic}}</text>
         </view>
       </view>
 
@@ -51,10 +51,12 @@
           </view>
           <view class="text-gray text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text>
-            {{room.is_vip?(room.boot_open?'已开启，可在群内使用指令报名活动':'未开启，开启后可在群内使用指令报名活动'):'未获得机器人资格，请添加微信ledongmao'}}</view>
+            {{room.is_vip?(room.boot_open?'已开启，可在群内使用指令报名活动':'未开启，开启后可在群内使用指令报名活动'):'未获得机器人资格，请添加微信ledongmao'}}
+          </view>
         </view>
         <view class="action">
-          <switch disabled="{{!room.is_vip}}" class="sm blue" bindchange="open_bot" checked="{{room.boot_open}}"></switch>
+          <switch disabled="{{!room.is_vip}}" class="sm blue" bindchange="open_bot" checked="{{room.boot_open}}">
+          </switch>
         </view>
       </view>
     </view>
@@ -93,7 +95,8 @@
             <text class="text-grey">开启通知推送</text>
           </view>
           <view class="text-gray text-sm">
-            <text class="cuIcon-infofill margin-right-xs"></text> 开启后可接收小程序消息通知</view>
+            <text class="cuIcon-infofill margin-right-xs"></text> 开启后可接收小程序消息通知
+          </view>
         </view>
         <view class="action">
           <switch class="blue sm" bindchange="" disabled="{{true}}"></switch>

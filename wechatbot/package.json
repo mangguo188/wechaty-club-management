@@ -1,7 +1,7 @@
 {
-  "name": "wechat-assistant",
-  "version": "3.5.0",
-  "description": "微信小助手3.5.0",
+  "name": "wechat-club-management",
+  "version": "0.5.0",
+  "description": "活动报名微信机器人",
   "main": "index.js",
   "scripts": {
     "pm2": "pm2 start pm2.json",
@@ -18,20 +18,15 @@
     "wechaty",
     "mongoose",
     "微信机器人",
-    "微信助手",
     "node",
     "js"
   ],
   "dependencies": {
     "crypto": "^1.0.1",
     "http": "0.0.1-security",
-    "mqtt": "^4.2.6",
-    "openai-sdk": "^1.0.1",
     "qrcode-reader": "^1.0.4",
     "qrcode-terminal": "^0.12.0",
-    "wechaty": "^0.62.3",
-    "wechaty-puppet": "^0.41.4",
-    "wechaty-puppet-padlocal": "^0.4.2"
+    "wechaty": "^0.68.1"
   },
   "devDependencies": {
     "pm2": "^4.2.3"

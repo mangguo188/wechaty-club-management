@@ -34,7 +34,8 @@
         </view>
         <view class="action">
           <view class="text-grey text-xs">{{peer.gender}}</view>
-          <view class="cu-tag round {{item.wait_peer?'bg-red':'bg-gray'}} sm" bindtap="bind" data-index="{{index}}" data-wxid="{{peer.wxid}}" data-openid="{{item._id}}">确认</view>
+          <view class="cu-tag round {{item.wait_peer?'bg-red':'bg-gray'}} sm" bindtap="bind" data-index="{{index}}"
+            data-wxid="{{peer.wxid}}" data-openid="{{item._id}}">确认</view>
         </view>
       </view>
     </block>
@@ -91,7 +92,7 @@
       </view>
       <view class="content">
         <view class="text-grey">
-          <text class="text-cut">{{item.nick}}</text>
+          <text class="text-cut">{{item.topic}}</text>
           <view class="cu-tag round bg-orange sm">{{item.roomid}}</view>
         </view>
         <view class="text-orange text-sm flex">

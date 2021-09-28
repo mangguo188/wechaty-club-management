@@ -515,7 +515,7 @@ Page({
           })
         }
         if (action == 'update_is_active' && that.data.act.status == 0) {
-          that.doConnect('update_is_active')
+          // that.doConnect('update_is_active')
         }
 
       },
@@ -553,7 +553,7 @@ Page({
         title: '更新成功',
       })
       if (that.data.act.is_active) {
-        that.doConnect('update_act_status')
+        // that.doConnect('update_act_status')
       }
     })
 
@@ -872,7 +872,7 @@ Page({
           }, res => {
             if (snapshot.type === 'init') {
               if (that.data.fr == 'add' && that.data.is_active) {
-                that.doConnect('add_act')
+                // that.doConnect('add_act')
               }
             }
           })
@@ -1953,9 +1953,9 @@ Page({
       })
     }
 
-    var host = 'bdiot.iot.gz.baidubce.com'
-    var password = 'tVChsBFQtqLEaCCk'
-    var userName = 'awgnfty/service_client'
+    var host = ''
+    var password = ''
+    var userName = ''
     var client_id = that.data.openid + new Date().getTime()
 
     console.debug('连接准备完成=============', host, client_id, password, userName)
@@ -2131,14 +2131,6 @@ Page({
     that.setData({
       is_connect: false
     })
-
-    // if (app.globalData.control_unload) {
-
-    // } else {
-    //   setTimeout(function () {
-    //     that.doConnect()
-    //   }, 500)
-    // }
 
   }
 })

@@ -7,7 +7,7 @@
           <view class="content flex-sub">
             <view class="text-grey">{{member_info.nick||'匿名'}}</view>
             <view class="text-gray text-sm flex justify-between">
-              <view class="cu-tag bg-blue light round">{{room.nick||member_info.roomid}}
+              <view class="cu-tag bg-blue light round">{{room.topic||member_info.roomid}}
               </view>
               <view class="text-gray text-sm">
                 参加群活动{{total_count||0}}次

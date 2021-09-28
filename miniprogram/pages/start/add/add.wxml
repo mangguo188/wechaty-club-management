@@ -30,7 +30,7 @@
   <form>
     <view hidden="{{true}}" class="cu-form-group" wx:if="{{room}}">
       <view class="title">微信群</view>
-      <input name='room' disabled="{{true}}" placeholder="所属俱乐部" value="{{room.nick||room.roomid}}"></input>
+      <input name='room' disabled="{{true}}" placeholder="所属俱乐部" value="{{room.topic||room.roomid}}"></input>
     </view>
     <!-- <view class="cu-form-group maring-top">
       <view class="title">日期</view>
@@ -65,11 +65,11 @@
         slot="footer" />
     </view>
 
-    <view class="cu-form-group" bindtap="add_location">
+    <!-- <view class="cu-form-group" bindtap="add_location">
       <view class="title">地点</view>
       <input placeholder="选择活动地点" value="{{params.location_name}}"></input>
       <text class="cuIcon-locationfill text-blue"></text>
-    </view>
+    </view> -->
     <!-- <view class="cu-form-group">
       <textarea style="height:200rpx;" maxlength="300" disabled="" bindinput="set_simple_act_decs"
         value="{{params.decs}}" placeholder="输入活动详情（活动须知、注意事项等），最多300字"></textarea>
@@ -97,7 +97,7 @@
         </view>
 
         <view class="cu-list menu text-left">
-          <view class="cu-item margin" wx:for="{{templates}}" wx:key="index" bindtap="use_this" data-index="{{index}}">
+          <view class="cu-item margin" wx:for="{{templates||[]}}" wx:key="index" bindtap="use_this" data-index="{{index}}">
             <view class="padding">
               <text>{{(params.act_date.text_ch||params.act_date.text)+' '+params.act_time.text+'-'+params.act_time.end_text+'\n'+(params.location_name||'xxx体育馆')+'\n限'+params.maximum+'人\n'+(params.deadline==0?'':'提前'+params.deadline+'小时截止报名及取消报名\n')}}{{item}}
               </text>
@@ -128,10 +128,12 @@
           <view>报退截止时间</view>
           <view wx:if="{{params.deadline!=0}}" class="text-blue text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text>
-            取消报名必须提前{{params.deadline}}小时</view>
+            取消报名必须提前{{params.deadline}}小时
+          </view>
           <view wx:else class="text-blue text-sm">
             <text class="cuIcon-infofill margin-right-xs"></text>
-            活动开始前均可取消报名</view>
+            活动开始前均可取消报名
+          </view>
         </view>
         <view class="action">
           <wux-input-number id='deadline' color="assertive" longpress disabled="{{ false }}"
@@ -165,21 +167,21 @@
           <text class="text-blue">{{checkeds_num==0?'去添加':'已选'+checkeds_num+'人'}}</text>
         </view>
       </view>
-            <view class="cu-item">
-              <view class="content padding-tb-sm">
-                <view>{{params.price.male_price==0?"AA制均摊":'固定收费'}}</view>
-                <view class="text-blue text-sm">
-                  <text class="cuIcon-infofill margin-right-xs"></text>
-                  {{params.price.male_price==0?"AA制均摊，活动结束后手动结算":('活动报名费每人次'+params.price.male_price+"元")}}
-                </view>
-              </view>
-              <view class="action">
-                <wux-input-number id='opentime' color="assertive" longpress disabled="{{ false }}"
-                  value="{{ params.price.male_price }}" default-value="{{params.price.male_price}}" auto="{{ false }}" min="{{ 0 }}"
-                  max="{{ 168 }}" bind:change="set_price" slot="footer" />
-              </view>
-            </view>
-      
+      <view class="cu-item">
+        <view class="content padding-tb-sm">
+          <view>{{params.price.male_price==0?"AA制均摊":'固定收费'}}</view>
+          <view class="text-blue text-sm">
+            <text class="cuIcon-infofill margin-right-xs"></text>
+            {{params.price.male_price==0?"AA制均摊，活动结束后手动结算":('活动报名费每人次'+params.price.male_price+"元")}}
+          </view>
+        </view>
+        <view class="action">
+          <wux-input-number id='opentime' color="assertive" longpress disabled="{{ false }}"
+            value="{{ params.price.male_price }}" default-value="{{params.price.male_price}}" auto="{{ false }}"
+            min="{{ 0 }}" max="{{ 168 }}" bind:change="set_price" slot="footer" />
+        </view>
+      </view>
+
     </view>
 
     <view class="cu-form-group margin-top">
@@ -378,7 +380,8 @@
       <van-tag class="demo-margin-right margin-right" round>
         <van-icon color="" name="calender-o" size="22rpx" custom-class="icon" bindtap='openCalendar' />
         <text class="padding-fr" bindtap='openCalendar'>{{params.act_date.text?params.act_date.text:'发布日期'}}</text>
-        <van-icon wx:if="{{params.act_date.text}}" bindtap="clear_act_date" name="clear" size="22rpx" custom-class="icon" />
+        <van-icon wx:if="{{params.act_date.text}}" bindtap="clear_act_date" name="clear" size="22rpx"
+          custom-class="icon" />
       </van-tag>
       <!-- <van-tag class="demo-margin-right margin-right" round>
         <view style="display:flex;flex-direction:row;align-items:center;">
@@ -399,24 +402,26 @@
       <van-tag class="demo-margin-right margin-right" round>
         <van-icon name="friends-o" size="22rpx" custom-class="icon" bindtap='set_act_group' />
         <text wx:if="{{!params.group_name}}" class="padding-fr" bindtap='set_act_group'>关联微信群</text>
-        <open-data wx:if="{{params.group_name}}" bindtap='set_act_group' class="padding-fr" type="groupName" default-text="{{params.group_name}}" open-gid="{{params.group_name}}" binderror="not_in_group"></open-data>
-        <van-icon wx:if="{{params.group_name}}" bindtap="clear_act_group" name="clear" size="22rpx" custom-class="icon" />
+        <open-data wx:if="{{params.group_name}}" bindtap='set_act_group' class="padding-fr" type="groupName"
+          default-text="{{params.group_name}}" open-gid="{{params.group_name}}" binderror="not_in_group"></open-data>
+        <van-icon wx:if="{{params.group_name}}" bindtap="clear_act_group" name="clear" size="22rpx"
+          custom-class="icon" />
       </van-tag>
 
     </view>
   </wux-wing-blank>
   <wux-white-space body-style="height: 20rpx" />
   <van-cell-group wx:if="{{!show_set_time}}">
-      <wux-cell title="联系人" isLink bindtap="set_contact_info">
-        <view class='' style='font-size:26rpx;color:#11c1f3;' slot="footer">
-          <text>{{params.contact_info.name||'设置'}}</text>
-        </view>
-      </wux-cell>
-      <wux-cell title="电话" isLink bindtap="set_contact_info">
-        <view class='' style='font-size:26rpx;color:#11c1f3;' slot="footer">
-          <text>{{params.contact_info.cellphone||'设置'}}</text>
-        </view>
-      </wux-cell>
+    <wux-cell title="联系人" isLink bindtap="set_contact_info">
+      <view class='' style='font-size:26rpx;color:#11c1f3;' slot="footer">
+        <text>{{params.contact_info.name||'设置'}}</text>
+      </view>
+    </wux-cell>
+    <wux-cell title="电话" isLink bindtap="set_contact_info">
+      <view class='' style='font-size:26rpx;color:#11c1f3;' slot="footer">
+        <text>{{params.contact_info.cellphone||'设置'}}</text>
+      </view>
+    </wux-cell>
   </van-cell-group>
   <view class="fixed-bottom">
     <wux-wing-blank body-style="margin-bottom:20rpx;margin-top:20rpx;background-color: #f6f6f6;">
@@ -429,12 +434,15 @@
   <wux-white-space body-style="height: 20rpx" />
   <wux-wing-blank body-style="background-color: #fff;">
     <view style="padding:0rpx 30rpx;background-color:#fff;">
-      <textarea maxlength="100" value="{{params.decs}}" placeholder="点击按钮选择微信群即可关联微信群" placeholder-style="color:#666;font-size:26rpx;" style='background-color:#fff;height:400rpx;width:100%;' bindinput="set_simple_act_decs" />
+      <textarea maxlength="100" value="{{params.decs}}" placeholder="点击按钮选择微信群即可关联微信群"
+        placeholder-style="color:#666;font-size:26rpx;" style='background-color:#fff;height:400rpx;width:100%;'
+        bindinput="set_simple_act_decs" />
       <wux-white-space body-style="height: 20rpx" />
       <van-tag class="demo-margin-right margin-right" round>
         <van-icon color="" name="calender-o" size="22rpx" custom-class="icon" bindtap='openCalendar' />
         <text class="padding-fr" bindtap='openCalendar'>{{params.act_date.text?params.act_date.text:'截止日期'}}</text>
-        <van-icon wx:if="{{params.act_date.text}}" bindtap="clear_act_date" name="clear" size="22rpx" custom-class="icon" />
+        <van-icon wx:if="{{params.act_date.text}}" bindtap="clear_act_date" name="clear" size="22rpx"
+          custom-class="icon" />
       </van-tag>
       <van-tag class="demo-margin-right margin-right" round>
         <view style="display:flex;flex-direction:row;align-items:center;">
@@ -444,7 +452,8 @@
               <text class="padding-fr">{{params.act_time.text?params.act_time.text:'截止时间'}}</text>
             </picker>
           </view>
-          <van-icon wx:if="{{params.act_time.text}}" bindtap="clear_act_time" name="clear" size="22rpx" custom-class="icon" />
+          <van-icon wx:if="{{params.act_time.text}}" bindtap="clear_act_time" name="clear" size="22rpx"
+            custom-class="icon" />
         </view>
       </van-tag>
       <!-- <van-tag class="demo-margin-right margin-right" round>
@@ -455,16 +464,20 @@
       <van-tag class="demo-margin-right margin-right" round>
         <van-icon name="friends-o" size="22rpx" custom-class="icon" bindtap='set_act_group' />
         <text wx:if="{{!params.group_name}}" class="padding-fr" bindtap='set_act_group'>关联微信群</text>
-        <open-data wx:if="{{params.group_name}}" bindtap='set_act_group' class="padding-fr" type="groupName" default-text="{{params.group_name}}" open-gid="{{params.group_name}}" binderror="not_in_group"></open-data>
-        <van-icon wx:if="{{params.group_name}}" bindtap="clear_act_group" name="clear" size="22rpx" custom-class="icon" />
+        <open-data wx:if="{{params.group_name}}" bindtap='set_act_group' class="padding-fr" type="groupName"
+          default-text="{{params.group_name}}" open-gid="{{params.group_name}}" binderror="not_in_group"></open-data>
+        <van-icon wx:if="{{params.group_name}}" bindtap="clear_act_group" name="clear" size="22rpx"
+          custom-class="icon" />
       </van-tag>
 
     </view>
   </wux-wing-blank>
   <wux-white-space body-style="height: 20rpx" />
   <van-cell-group wx:if="{{!show_set_time}}">
-    <van-cell title="联系人" value="{{params.contact_info.name||'设置'}}" is-link icon="contact" border="{{ true }}" bindtap="set_contact_info" />
-    <van-cell title="电话" value="{{params.contact_info.cellphone||'设置'}}" is-link icon="phone-o" border="{{ true }}" bindtap="set_contact_info" />
+    <van-cell title="联系人" value="{{params.contact_info.name||'设置'}}" is-link icon="contact" border="{{ true }}"
+      bindtap="set_contact_info" />
+    <van-cell title="电话" value="{{params.contact_info.cellphone||'设置'}}" is-link icon="phone-o" border="{{ true }}"
+      bindtap="set_contact_info" />
   </van-cell-group>
   <view class="fixed-bottom">
     <wux-wing-blank body-style="margin-bottom:20rpx;margin-top:20rpx;background-color: #f6f6f6;">
@@ -474,6 +487,7 @@
 </block>
 
 <view hidden="ture">
-  <open-data wx:for="{{wx_groups}}" wx:key="index" type="groupName" default-text="无效群" open-gid="{{item.name}}" binderror="not_in_group" data-id="{{item._id}}" data-index="{{index}}"></open-data>
+  <open-data wx:for="{{wx_groups}}" wx:key="index" type="groupName" default-text="无效群" open-gid="{{item.name}}"
+    binderror="not_in_group" data-id="{{item._id}}" data-index="{{index}}"></open-data>
   <!-- <open-data type="groupName" open-gid="tGfysU0VpoGFO103iBNutx91Skshg"></open-data> -->
 </view>

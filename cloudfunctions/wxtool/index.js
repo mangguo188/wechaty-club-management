@@ -1,5 +1,6 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
+//<<<<<<< main
 // cloud.init()
 cloud.init({
   env: 'cloud1-9g9f1jcs9740dca9'
@@ -29,6 +30,7 @@ const PERSONAL_INFO = 6500
 const DEBUG_SWITCH = 6000
 const PERSONAL_DETAIL = 6550
 const DESTROY_ALL = 9999
+//>>>>>>> main
 
 let is_new_group = 1
 
@@ -47,9 +49,9 @@ const order_text = function (act, orders, msg) {
         let new_order = orders[i]
         new_order = JSON.parse(JSON.stringify(new_order))
         if (new_order.is_bench) {
-          new_order.alias = new_order.alias || new_order.nick
+          new_order.nickName = new_order.nickName
         } else {
-          new_order.alias = j == 0 ? (new_order.alias || new_order.nick) : ((new_order.alias || new_order.nick) + ' 挂' + j)
+          new_order.nickName = j == 0 ? new_order.nickName : ((new_order.nickName) + ' 挂' + j)
         }
         new_orders.push(new_order)
       }
@@ -64,15 +66,15 @@ const order_text = function (act, orders, msg) {
 
 
     if (i < (act.maximum - 1)) {
-      msg = msg + String(i + 1) + '. ' + (orders[i].alias || orders[i].nick) + (orders[i].order_amount_text ? (orders[i].paid ? ' 【已付】' : (' 【待付' + orders[i].order_amount_text + '】')) : '') + '\n'
+      msg = msg + String(i + 1) + '. ' + orders[i].nickName + '\n'
     } else if (i == (act.maximum - 1)) {
-      msg = msg + String(i + 1) + '. ' + (orders[i].alias || orders[i].nick) + (orders[i].order_amount_text ? (orders[i].paid ? ' 【已付】' : (' 【待付' + orders[i].order_amount_text + '】')) : '') + '\n' + '报名已满！\n'
+      msg = msg + String(i + 1) + '. ' + orders[i].nickName + '\n' + '报名已满！\n'
     } else if (i == act.maximum) {
-      msg = msg + '\n替补报名' + (orders.length - act.maximum) + '人:\n' + String(i + 1) + '. ' + (orders[i].alias || orders[i].nick) + '\n'
+      msg = msg + '\n替补报名' + (orders.length - act.maximum) + '人:\n' + String(i + 1) + '. ' + (orders[i].alias || orders[i].nickName) + '\n'
     } else if (i == (orders.length - 1)) {
-      msg = msg + String(i + 1) + '. ' + (orders[i].alias || orders[i].nick) + '\n'
+      msg = msg + String(i + 1) + '. ' + orders[i].nickName + '\n'
     } else {
-      msg = msg + String(i + 1) + '. ' + (orders[i].alias || orders[i].nick) + '\n'
+      msg = msg + String(i + 1) + '. ' + orders[i].nickName + '\n'
     }
 
   }
@@ -200,39 +202,23 @@ const get_req = (wxKey, msgType, msg, roomid, wxid) => {
 
   }
 }
-// 获取会员信息
-const get_member_info = async (roomid, wxid) => {
-  let res = await db.collection('member').where({
-    roomid,
-    wxid,
-    nick: _.exists(true)
-  }).get()
-
-  return res.data.length ? res.data[0] : {}
-}
 // 更新会员信息
 const update_member = async (data) => {
   console.info('更新会员信息')
-  // await db.collection('log').add({
-  //   data
-  // })
   let docid = data.room.roomid + '_' + data.user.wxid
   console.info(docid)
   return await db.collection('member').doc(docid).set({
     data: {
       roomid: data.room.roomid,
       wxid: data.user.wxid,
-      nick: data.user.nickName,
-      alias: data.alias,
-      update_time: new Date().getTime(),
-      avatar: data.user.avatar
+      nickName: data.user.nickName,
+      update_time: new Date().getTime()
     }
   })
 }
 // 更新或创建群组
 const update_or_create_room = async (data) => {
   console.info('更新群组信息')
-  let to = []
   let room_get = await db
     .collection('room')
     .where({
@@ -250,10 +236,6 @@ const update_or_create_room = async (data) => {
         data: room_data
       })
 
-    if (room_get.data[0].to) {
-      to = room_get.data[0].to
-    }
-
   } else {
     room_update_or_create = await db.collection('room')
       .doc(data.room.roomid)
@@ -261,14 +243,7 @@ const update_or_create_room = async (data) => {
         data: room_data
       })
   }
-  return [room_update_or_create, to]
-}
-// 查询群组是否存在
-const get_is_new_group = async (data) => {
-  let res = await db.collection('room').where({
-    _id: data.room.roomid
-  }).get()
-  return res.data.length
+  return room_update_or_create
 }
 // 获取活动信息
 const get_act = async (data) => {
@@ -295,8 +270,7 @@ const sign_in_act = async (act, member, add_num, is_bench, create_time) => {
         act_id: act._id,
         roomid: act.roomid,
         wxid: member.wxid,
-        nick: member.nick,
-        alias: member.alias,
+        nickName: member.nickName,
         status: 0,
         total_num: add_num,
         update_time: ts,
@@ -318,8 +292,7 @@ const sign_in_act = async (act, member, add_num, is_bench, create_time) => {
           act_id: act._id,
           roomid: act.roomid,
           wxid: member.wxid,
-          nick: member.nick,
-          alias: member.alias,
+          nickName: member.nickName,
           status: 0,
           total_num: add_num,
           update_time: ts,
@@ -382,82 +355,8 @@ const sign_in_act2 = async (act, member, add_num, create_time) => {
   return msg
 
 }
-// 取消报名活动
-const cancel_sign_in_act = async (act, cur_order, add_num, create_time) => {
-  let res = ''
-  let cancel_num = 0
-  let new_adder = []
-  if (cur_order.total_num > add_num) {
-    res = await db.collection('order').doc(cur_order._id).update({
-      data: {
-        total_num: cur_order.total_num - add_num
-      }
-    })
-    cancel_num = add_num
-  } else {
-    res = await db.collection('order').doc(cur_order._id).remove()
-    cancel_num = cur_order.total_num
-  }
-
-  // 替补转正
-  let res_benchs = await db.collection('order')
-    .where({
-      is_bench: true,
-      act_id: cur_order.act_id
-    })
-    .orderBy('create_time', 'asc')
-    .get()
-
-  let benchs = res_benchs.data
-
-  if (benchs.length > 0) {
-    let new_add_num = cancel_num
-
-    for (let key in benchs) {
-      let res_member = await db
-        .collection('member')
-        .doc(act.roomid + '_' + benchs[key].wxid)
-        .get()
-      let member = res_member.data
-
-      if (benchs[key].total_num <= new_add_num) {
-
-        await sign_in_act(act, member, benchs[key].total_num, false, create_time)
-        new_adder.push(member.wxid)
-        let del_order = await db.collection('order')
-          .doc(benchs[key]._id)
-          .remove()
-
-        new_add_num = new_add_num - benchs[key].total_num
-
-        if (new_add_num == 0) {
-          break
-        }
-
-      } else {
-
-        await sign_in_act(act, member, new_add_num, false, create_time)
-        new_adder.push(member.wxid)
-        let update_order = await db
-          .collection('order')
-          .doc(benchs[key]._id)
-          .update({
-            data: {
-              total_num: benchs[key].total_num - new_add_num
-            }
-          })
-
-        break
-      }
-
-    }
-  }
-
-  return [cancel_num, new_adder]
-
-}
 // 取消报名或替补
-const cancel_sign_in_act2 = async (act, cur_orders, add_num, create_time) => {
+const cancel_sign_in_act = async (act, cur_orders, add_num, create_time) => {
   let res = ''
   let cancel_num = 0
   let cancel_num_total = 0
@@ -567,68 +466,6 @@ const cancel_sign_in_act2 = async (act, cur_orders, add_num, create_time) => {
   return [cancel_num, new_adder, cancel_num_total]
 
 }
-// 替补转正
-const bench_sign_in_act = async (act, add_num, create_time) => {
-  let res = ''
-  let cancel_num = add_num
-  let new_adder = []
-  // 替补转正
-  let res_benchs = await db.collection('order')
-    .where({
-      is_bench: true,
-      act_id: act._id
-    })
-    .orderBy('create_time', 'asc')
-    .get()
-
-  let benchs = res_benchs.data
-
-  if (benchs.length > 0) {
-    let new_add_num = cancel_num
-
-    for (let key in benchs) {
-      let res_member = await db
-        .collection('member')
-        .doc(act.roomid + '_' + benchs[key].wxid)
-        .get()
-      let member = res_member.data
-
-      if (benchs[key].total_num <= new_add_num) {
-
-        await sign_in_act(act, member, benchs[key].total_num, false, create_time)
-        new_adder.push(member.wxid)
-        let del_order = await db.collection('order')
-          .doc(benchs[key]._id)
-          .remove()
-
-        new_add_num = new_add_num - benchs[key].total_num
-
-        if (new_add_num == 0) {
-          break
-        }
-
-      } else {
-
-        await sign_in_act(act, member, new_add_num, false, create_time)
-        new_adder.push(member.wxid)
-        let update_order = await db
-          .collection('order')
-          .doc(benchs[key]._id)
-          .update({
-            data: {
-              total_num: benchs[key].total_num - new_add_num
-            }
-          })
-
-        break
-      }
-
-    }
-  }
-
-  return [cancel_num, new_adder]
-
-}
 // 更新报名信息
 const update_sing_in = async (cur_order, add_num) => {
   return await db.collection('order').doc(cur_order._id).update({
@@ -637,38 +474,11 @@ const update_sing_in = async (cur_order, add_num) => {
     }
   })
 }
-// 取消替补报名
-const cancel_bench = async (cur_bench_orders, add_num) => {
-  let new_add_num = add_num
-
-  for (let key in cur_bench_orders) {
-    if (cur_bench_orders[key].total_num <= new_add_num) {
-      await db.collection('order').doc(cur_bench_orders[key]._id).remove()
-
-      new_add_num = new_add_num - cur_bench_orders[key].total_num
-      if (new_add_num == 0) {
-        break
-      }
-
-    } else {
-      await db.collection('order').doc(cur_bench_orders[key]._id).update({
-        data: {
-          total_num: cur_bench_orders[key].total_num - new_add_num
-        }
-      })
-      new_add_num = 0
-      break
-    }
-  }
-
-  return add_num - new_add_num
-
-}
 // 获取全部订单
 const get_act_orders = async (act) => {
   let res = await db.collection('order').where({
-    act_id: act._id
-  })
+      act_id: act._id
+    })
     .orderBy('is_bench', 'asc')
     .orderBy('create_time', 'asc')
     .get()
@@ -710,82 +520,6 @@ const get_cur_all_orders = async (act, member) => {
     .get()
   return res.data
 }
-// 获取当前用户替补订单
-const get_cur_bench_order = async (act, member) => {
-  let res = await db.collection('order').where({
-    act_id: act._id,
-    wxid: member.wxid,
-    is_bench: true
-  }).orderBy('create_time', 'desc').get()
-  return res.data
-}
-// 更新或创建用户
-const update_or_create_user = async (data) => {
-  console.info('更新用户信息')
-  return await db
-    .collection('wx_user')
-    .doc(data.user.wxid)
-    .set({
-      data: data.user
-    })
-}
-// 创建活动
-const create_act = async (data) => {
-
-  let decs = data.text
-  let maximum = 0
-  let ts = data.create_time + 8 * 60 * 60 * 1000
-  let contact_info = {}
-  contact_info.cellphone = data.timenlp.phone_list && data.timenlp.phone_list.length ? data.timenlp.phone_list[0] : ''
-  contact_info.name = data.user.nickName
-  let _id = data.room.roomid + '-' + data.user.wxid
-  await db.collection('activity').doc(_id).set({
-    data: {
-      contact_info,
-      roomid: data.room.roomid,
-      roomnick: data.room.nick,
-      ownerid: data.room.ownerid,
-      act_type: data.type,
-      status: 0,
-      is_active: true,
-      decs,
-      create_time: data.create_time,
-      maximum,
-      act_mode: 'simple',
-      utc_time: formatTime_md(ts)[5],
-      nickName: data.user.nickName,
-      wxid: data.user.wxid,
-      timenlp: data.timenlp,
-      data
-    }
-  })
-  await db.collection('log').add({
-    data: {
-      type: data.type,
-      msg: {
-        contact_info,
-        roomid: data.room.roomid,
-        roomnick: data.room.nick,
-        ownerid: data.room.ownerid,
-        act_type: data.type,
-        status: 0,
-        is_active: true,
-        decs,
-        create_time: data.create_time,
-        maximum,
-        act_mode: 'simple',
-        utc_time: formatTime_md(ts)[5],
-        nickName: data.user.nickName,
-        wxid: data.user.wxid,
-        timenlp: data.timenlp,
-        data
-      }
-    }
-  })
-
-  console.info('新创建活动成功')
-}
-
 
 
 // 云函数入口函数
@@ -819,6 +553,8 @@ exports.main = async (event, context) => {
     body = JSON.parse(body)
     console.info('body', body)
 
+//<<<<<<< main
+//=======
     if (body.events && body.events['room_join']) {
       let join_in_info = body.events['room_join']
       // console.info('这个是join_in_info',join_in_info)//更改
@@ -854,34 +590,31 @@ exports.main = async (event, context) => {
       }
     }
 
+//>>>>>>> main
     if (body.events && body.events.message) {
       let data = body.events.message
 
-      // 更新或创建用户
-      await update_or_create_user(data)
+      // message消息示例
+      //   {
+      //     "user":{
+      //         "wxid":"xxxx",
+      //         "gender":2,
+      //         "nickName":"xxx"
+      //     },
+      //     "room":{
+      //         "roomid":"xxx",
+      //         "topic":"xxx"
+      //     },
+      //     "text":"xxxx",
+      //     "create_time":1111111
+      // }
 
       if (data.room && data.room.roomid) {
-        // is_new_group = await get_is_new_group(data)
-
         // 更新群组信息
-        let res_update_or_create_room = await update_or_create_room(data)
-        to = res_update_or_create_room[1]
-        console.info('待转发的群', to)
+        await update_or_create_room(data)
 
         // 更新会员信息
         await update_member(data)
-
-        // if (data.room.announce && data.room.announce.length > 6 && data.room.announce.replace(/\s*/g, "").slice(0, 4) == '活动限【') {
-        //   await create_act(data)
-        // } else {
-        //   console.info('公告内容不符合活动发布要求或无公告')
-        // }
-
-        if (data.type == "车找人" || data.type == "人找车") {
-          await create_act(data)
-        } else {
-          console.info('不包含顺风车信息~')
-        }
       }
 
       let cur_time = new Date().getTime()
@@ -889,29 +622,22 @@ exports.main = async (event, context) => {
       let user = data.user
       let wxid = data.user.wxid
       let roomid = data.room.roomid
-      let nick = data.alias || data.user.nickName
+      let nickName = data.user.nickName
       let content = data.text
-      let text = data.text
       let create_time = data.create_time
       let member = {
         _id: roomid + '_' + wxid,
         roomid,
-        nick: data.user.nickName,
+        nickName: data.user.nickName,
         gender: data.user.gender,
-        wxid,
-        alias: data.alias,
-        avatar: data.user.avatar || ''
+        wxid
       }
+//<<<<<<< main
 
-      let res_white_list = await db.collection('room').where({
-        roomid,
-        is_vip: true,
-        boot_open: true
-      }).count()
+      let msg = ''
 
-      if (res_white_list.total == 0) {
-        content = '群不在白名单中或未开启机器人功能...'
-      }
+      if (content.replace(/\s*/g, "") == '帮助') {
+//=======
       // if(/^报名$/i.test(text)){//9.27添加内容
       //   sign_in_act(act, member, add_num, is_bench, create_time)
       // }
@@ -1037,96 +763,19 @@ exports.main = async (event, context) => {
         msg = '复制粘贴报名无效！请直接回复 报名 或 报名2人 完成报名~'
         req = get_req(wxKey, 'Text', msg, roomid, wxid)
       } else if (content.replace(/\s*/g, "") == '帮助') {
+//>>>>>>> main
         let keywords_base = {
           '【报名】': '报名活动1人',
           '【取消】': '取消报名1人',
-          // '【替补】': '替补报名',
-          // '【取消替补】': '取消替补报名',
-          '【报名2人】': '报名2人',
-          '【取消2人】': '取消2人报名',
-          '【活动】': '查询活动详情',
-          '【绑定】': '会员信息同步到小程序'
-          // '<签到>': '活动签到',
-          // '#加入': '加入俱乐部',
-          // '#活动结束': '结束当前活动',
-          // '#报名开启': '恢复活动报名',
-          // '#活动模板': '获取发布活动模板',
-        }
-        let keywords_e = {
-          // '#创建俱乐部': '群关联为俱乐部',
-          // '#关闭': '禁言超小哥',
-          // '#开启': '恢复超小哥发言',
-          // '#找车': '获取群内[顺风车]信息',
-          // '#找人': '获取群内[搭车人]信息',
-          // '#取消行程': '删除本人发布的信息',
+          '【活动】': '查询活动详情'
         }
         msg = '回复括号内指令即可完成操作：\n--------------------------------\n'
 
         for (let key in keywords_base) {
           msg = msg + key + keywords_base[key] + '\n'
         }
-        // msg = msg + '----------------\n拓展功能：\n'
-        // for (let key in keywords_e) {
-        //   msg = msg + key + ' ' + keywords_e[key] + '\n'
-        // }
-        msg = msg + '--------------------------------\n点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动'
-
         req = get_req(wxKey, 'Text', msg, roomid, '')
 
-      } else if (content.replace(/\s*/g, "") == '绑定') {
-        let hash = createHash('sha256');
-        hash.update(`${user.nickName}${user.gender}`);
-        let user_hash = hash.digest('hex')
-        console.log(user_hash);
-        let card = {
-          appid: "wx36027ed8c62f675e",
-          description: `@${user.nickName}专属绑定激活卡片`,
-          title: `@${user.nickName}专属绑定激活卡片`,
-          pagePath: `pages/start/relatedlist/index.html?wxid=${wxid}&uuid=${wxid}&user_hash=${user_hash}`,
-          thumbKey: undefined,
-          thumbUrl: user.avatar.remoteUrl, // 推荐在 200K 以内，比例 5：4，宽度不大于 1080px
-          username: "gh_6c52e2baeb2d@app"
-        }
-
-        //   const miniProgramPayload = {
-        //     appid: "wx36027ed8c62f675e",
-        //     description: "群组大师群管理工具",
-        //     title: "活动报名自动化管理助手~",
-        //     pagePath: "pages/start/relatedlist/index.html",
-        //     thumbKey: undefined,
-        //     thumbUrl: "http://mmbiz.qpic.cn/mmbiz_jpg/mLJaHznUd7O4HCW51IPGVarcVwAAAuofgAibUYIct2DBPERYIlibbuwthASJHPBfT9jpSJX4wfhGEBnqDvFHHQww/0", // 推荐在 200K 以内，比例 5：4，宽度不大于 1080px
-        //     username: "gh_6c52e2baeb2d@app"
-        // };
-
-        let info_card = get_req(wxKey, 'MiniProgram', card, roomid, wxid)
-        return info_card
-      } else if (content.replace(/\s*/g, "") == '群组大师') {
-        let hash = createHash('sha256');
-        hash.update(`${user.nickName}${user.gender}`);
-        let user_hash = hash.digest('hex')
-        console.log(user_hash);
-        let card = {
-          appid: "wx36027ed8c62f675e",
-          description: `@${user.nickName}专属卡片`,
-          title: `@${user.nickName}专属卡片`,
-          pagePath: `pages/start/relatedlist/index.html?wxid=${wxid}&uuid=${wxid}&user_hash=${user_hash}`,
-          thumbKey: undefined,
-          thumbUrl: user.avatar.remoteUrl, // 推荐在 200K 以内，比例 5：4，宽度不大于 1080px
-          username: "gh_6c52e2baeb2d@app"
-        }
-
-        //   const miniProgramPayload = {
-        //     appid: "wx36027ed8c62f675e",
-        //     description: "群组大师群管理工具",
-        //     title: "活动报名自动化管理助手~",
-        //     pagePath: "pages/start/relatedlist/index.html",
-        //     thumbKey: undefined,
-        //     thumbUrl: "http://mmbiz.qpic.cn/mmbiz_jpg/mLJaHznUd7O4HCW51IPGVarcVwAAAuofgAibUYIct2DBPERYIlibbuwthASJHPBfT9jpSJX4wfhGEBnqDvFHHQww/0", // 推荐在 200K 以内，比例 5：4，宽度不大于 1080px
-        //     username: "gh_6c52e2baeb2d@app"
-        // };
-
-        let info_card = get_req(wxKey, 'MiniProgram', card, roomid, wxid)
-        return info_card
       } else if (content.replace(/\s*/g, "") == '查看' || content.replace(/\s*/g, "") == '活动') {
         // 查看活动
         let act = await get_act(data)
@@ -1137,7 +786,7 @@ exports.main = async (event, context) => {
           req = get_req(wxKey, 'Text', msg, roomid, '')
 
         } else {
-          msg = "群内没有可报名活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+          msg = "群内没有可报名活动"
           req = get_req(wxKey, 'Text', msg, roomid, wxid)
 
         }
@@ -1158,63 +807,12 @@ exports.main = async (event, context) => {
           if (!act._id) {
             msg = "群内没有可报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
           } else {
-
             msg = await sign_in_act2(act, member, add_num, create_time)
-
-            // // 获取当前活动全部报名信息，计算总报名人数
-            // let total_num = await get_act_total_num(act)
-            // if (total_num >= act.maximum) { // 报名已满
-
-            //   let cur_orders = await get_cur_all_orders(act, member)
-
-            //   let cur_total_num = 0
-
-            //   if (cur_orders.length) {
-            //     for (let i = 0; i < cur_orders.length; i++) {
-            //       cur_total_num = cur_total_num + cur_orders[i].total_num
-            //     }
-            //   }
-
-            //   if (cur_total_num + add_num > (act.single_upper_limit || 9)) {
-            //     msg = '名额超限，本活动限制每人累计最多报名' + (act.single_upper_limit || 9) + '人'
-            //   } else {
-            //     await sign_in_act(act, member, add_num, true, create_time)
-            //     let orders = await get_act_orders(act)
-            //     msg = '【替补报名】' + add_num + '人成功' + '!\n\n'
-            //     msg = order_text(act, orders, msg)
-            //   }
-
-            // } else if (total_num + add_num > act.maximum) { // 判断报名是否超出最大可报人数
-            //   msg = '名额不足，剩余名额' + (act.maximum - total_num) + '人'
-            // } else { //名额充足
-            //   // 获取当前用户报名信息
-            //   let cur_order = await get_cur_order(act, member)
-            //   let cur_num = 0
-            //   if (cur_order._id) {
-            //     cur_num = cur_order.total_num
-            //   }
-
-            //   if (cur_num + add_num > (act.single_upper_limit || 9)) {
-            //     msg = '名额超限，本活动限制每人累计最多报名' + (act.single_upper_limit || 9) + '人'
-            //   } else {
-            //     await sign_in_act(act, member, add_num, false, create_time)
-
-            //     let orders = await get_act_orders(act)
-            //     msg = '报名' + add_num + '人成功' + '!\n\n'
-            //     msg = order_text(act, orders, msg)
-            //   }
-
-
-
-            // }
-
           }
         } else {
           msg = '名额超限，一次回复最多报2人，可多次回复'
         }
         req = get_req(wxKey, 'Text', msg, roomid, wxid)
-
-
 
       } else if (['取消', '取消报名', '报名取消', '取消参加'].includes(content.replace(/\s*/g, "")) || /^取消\d人/g.test(content.replace(/\s*/g, ""))) {
         let add_num = 0
@@ -1245,19 +843,19 @@ exports.main = async (event, context) => {
 
             if (cur_orders.length > 0) {
 
-              let cancel_num = await cancel_sign_in_act2(act, cur_orders, add_num, create_time)
+              let cancel_num = await cancel_sign_in_act(act, cur_orders, add_num, create_time)
 
               // 获取全部订单
               let orders = await get_act_orders(act)
 
               if (cancel_num[1].length) {
-                msg = '【 ' + nick + '】取消' + cancel_num[2] + '人成功,替补转正!\n\n'
+                msg = '【 ' + nickName + '】取消' + cancel_num[2] + '人成功,替补转正!\n\n'
                 msg = order_text(act, orders, msg)
                 let atUserIdList = cancel_num[1]
                 atUserIdList.push(cur_orders[0].wxid)
                 req = get_req(wxKey, 'Text', msg, roomid, atUserIdList)
               } else {
-                msg = '【' + nick + '】取消' + cancel_num[2] + '人成功!\n\n'
+                msg = '【' + nickName + '】取消' + cancel_num[2] + '人成功!\n\n'
                 msg = order_text(act, orders, msg)
                 req = get_req(wxKey, 'Text', msg, roomid, member.wxid)
               }
@@ -1271,216 +869,6 @@ exports.main = async (event, context) => {
 
         }
 
-      } else if (content.replace(/\s*/g, "") == '替补' || /^替补\d人/g.test(content.replace(/\s*/g, ""))) {
-        let add_num = 0
-        if (content.replace(/\s*/g, "") == '替补') {
-          add_num = 1
-        } else {
-          add_num = Number(content.replace(/\s*/g, "").slice(2, 3))
-        }
-        let act = await get_act(data)
-
-        if (add_num < 3) {
-          if (!act._id) {
-            msg = "群内没有可报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
-
-          } else {
-
-            let total_num = await get_act_total_num(act)
-            if (total_num >= act.maximum) {
-
-              let res_cur_orders = await db.collection('order')
-                .where({
-                  act_id: act._id,
-                  wxid: member.wxid
-                })
-                .get()
-
-              let cur_orders = res_cur_orders.data
-
-              let cur_total_num = 0
-
-              if (cur_orders.length) {
-                for (let i = 0; i < cur_orders.length; i++) {
-                  cur_total_num = cur_total_num + cur_orders[i].total_num
-                }
-              }
-
-              if (cur_total_num + add_num > (act.single_upper_limit || 9)) {
-                msg = '名额超限，本活动限制每人累计最多报名' + (act.single_upper_limit || 9) + '人'
-              } else {
-                await sign_in_act(act, member, add_num, true, create_time)
-                let orders = await get_act_orders(act)
-                msg = '替补报名' + add_num + '人成功' + '!\n\n'
-                msg = order_text(act, orders, msg)
-              }
-
-            } else {
-              // 还有剩余名额
-              msg = "还有" + (act.maximum - total_num) + '个名额，可直接<报名>'
-            }
-
-          }
-        } else {
-          msg = '名额超限，一次回复最多报2人，可多次回复'
-        }
-
-        req = get_req(wxKey, 'Text', msg, roomid, wxid)
-
-      } else if (content.replace(/\s*/g, "") == '取消替补' || /^取消替补\d人/g.test(content.replace(/\s*/g, ""))) {
-        let add_num = 0
-        if (content.replace(/\s*/g, "") == '取消替补') {
-          add_num = 1
-        } else {
-          add_num = Number(content.replace(/\s*/g, "").slice(4, 5))
-        }
-
-        let act = await get_act(data)
-
-        if (!act._id) {
-          msg = "群内没有可取消报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
-
-        } else {
-
-          let cur_bench_orders = await get_cur_bench_order(act, member)
-
-          if (cur_bench_orders.length) {
-            let cancel_num = await cancel_bench(cur_bench_orders, add_num)
-
-            let orders = await get_act_orders(act)
-            msg = '取消替补' + cancel_num + '人成功' + '!\n\n'
-            msg = order_text(act, orders, msg)
-
-          } else {
-            msg = '未报名替补'
-
-          }
-
-        }
-        req = get_req(wxKey, 'Text', msg, roomid, wxid)
-
-      } else if (content.replace(/\s*/g, "") == '签到x' || content.replace(/\s*/g, "") == '打卡x') {
-
-        let member = await get_member_info(roomid, wxid)
-
-        let act = await get_act(data)
-
-        if (!act._id) {
-          msg = '群内没有签到中的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动'
-
-        } else {
-          let cur_order = await get_cur_order(act, member)
-
-          if (cur_order._id) {
-
-            if (cur_order.signin) {
-              msg = "无需重复签到"
-
-            } else {
-
-              let del_cur_order = await db.collection('order').doc(cur_order._id).update({
-                data: {
-                  signin: true
-                }
-              })
-
-              let orders = await get_act_orders(act)
-
-              // console.debug('订单+++++++++++++++', orders)
-
-              msg = '签到' + '成功!\n\n'
-
-              msg = order_text(act, orders, msg)
-
-            }
-
-          } else {
-            msg = '未报名活动'
-
-          }
-
-        }
-        req = get_req(wxKey, 'Text', msg, roomid, wxid)
-
-      } else if (content == '取消行程') {
-        // 删除车找人信息
-
-        let del_acts = await db.collection('activity').where(_.or([{
-          roomid,
-          wxid,
-          start_time: _.gt(new Date().getTime()),
-          act_type: '人找车'
-        }, {
-          roomid,
-          wxid,
-          start_time: _.gt(new Date().getTime()),
-          act_type: '车找人'
-        }])).get()
-
-        if (del_acts.data.length > 0) {
-          let del_act = await db.collection('activity').where(_.or([{
-            roomid,
-            wxid,
-            start_time: _.gt(new Date().getTime()),
-            act_type: '人找车'
-          }, {
-            roomid,
-            wxid,
-            start_time: _.gt(new Date().getTime()),
-            act_type: '车找人'
-          }])).remove()
-          req = {
-            "code": 200,
-            "data": {
-              "id": "20210304231703",
-              "type": 555,
-              "content": "你的行程信息已删除",
-              "wxid": roomid
-            }
-          }
-        } else {
-          req = {
-            "code": 200,
-            "data": {
-              "id": "20210304231703",
-              "type": 555,
-              "content": "24小时内您没有发布过行程信息",
-              "wxid": roomid
-            }
-          }
-        }
-
-      } else if (wxid == 'gh_3dfda90e39d6') {
-        let pay_order_res = await db.collection('order')
-          .where({
-            order_amount_text: content.replace(/\s*/g, ""),
-            paid: false
-          })
-          .get()
-        if (pay_order_res.data.length) {
-          let pay_order = pay_order_res.data[0]
-
-          let update_order_res = await db.collection('order')
-            .doc(pay_order._id)
-            .update({
-              data: {
-                paid: true
-              }
-            })
-
-          msg = '【' + (pay_order.alias || pay_order.nick) + '】已完成活动缴费' + content.replace(/\s*/g, "")
-          req = get_req(wxKey, 'Text', msg, pay_order.roomid, pay_order.wxid)
-
-        } else {
-          msg = '收到款项但未匹配到订单\n金额' + content.replace(/\s*/g, "")
-          req = get_req(wxKey, 'Text', msg, '', 'tyutluyc')
-        }
-
-      } else if (wxid != 'wxid_0o1t51l3f57221' && to.length) {
-
-        msg = text
-        req = get_req(wxKey, 'Text', msg, to[0], '')
-
       } else {
         // 不在指令范围
         req = {
@@ -1492,26 +880,8 @@ exports.main = async (event, context) => {
           queryStringParameters
         }
       }
-
-
-    } else if (body.events.ready) {
-      let msg = body.events.ready
-      let contactList = msg.contactList
-      console.info('contactList-------------', contactList.length)
-      let friend_contactList = []
-      for (let contact in contactList) {
-        if (contactList[contact].payload.friend) {
-          friend_contactList.push(contactList[contact])
-        }
-      }
-      console.info('friend_contactList-------------', friend_contactList.length)
-
-      msg.contactList = friend_contactList
-      msg.last_login = new Date().getTime()
-      let bot_res = await db.collection('bot').doc(wxKey).update({
-        data: msg
-      })
     } else {
+      // 不是微信消息
       def_req.data.wxKey = wxKey
       def_req.data.events = Object.keys(body.events)
       req = def_req
@@ -1523,8 +893,13 @@ exports.main = async (event, context) => {
         msg: body
       }
     })
+//<<<<<<< main
+  } else {
+    // 非post请求，返回错误信息
+//=======
 
   } else {//仅代表调用机器人成功的情况
+//>>>>>>> main
     console.info
     req = def_req
     req.data = event
