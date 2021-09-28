@@ -17,7 +17,7 @@
     "backgroundColor": "#F8F8F8",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "navigationBarTitleText": "群组大师",
+    "navigationBarTitleText": "ClubMaster",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {

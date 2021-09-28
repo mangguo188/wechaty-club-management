@@ -49,7 +49,7 @@
 						<view class="text-sm">
 							<text class="cuIcon-dianhua text-blue margin-right"></text>
 							<text class="text-df">{{act.contact_info.name}} {{act.contact_info.cellphone}}</text>
-							<view wx:if="{{is_owner}}" bindtap="manger" class="cu-tag radius bg-blue light sm margin-left">管理</view>
+							<view bindtap="manger" class="cu-tag radius bg-blue light sm margin-left">管理</view>
 						</view>
 						<view wx:if="{{act.group_name}}" class="text-sm">
 							<text class="cuIcon-group_fill text-blue margin-right"></text>
@@ -230,12 +230,16 @@
 									</view>
 									<view class="desc_2">
 
-										<wux-avatar body-style="background-color: #f6f6f6;margin:5rpx 10rpx;" shape="square" size="small"
-											src="{{item.member.avatar.remoteUrl}}" />
+										<!-- <wux-avatar body-style="background-color: #f6f6f6;margin:5rpx 10rpx;" shape="square" size="small"
+											src="{{item.member.avatar.remoteUrl}}" /> -->
+										<view class="cu-avatar bg-blue sm radius margin-right">
+											{{item.member.nickName[0]||'匿'}}
+											<view class="cu-tag badge">{{item.member.gender==1?'男':'女'}}</view>
+										</view>
 										<!-- <wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
 										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' /> -->
 										<text
-											style="{{index+1>act.maximum?'color:gray;':''}}">{{item.is_bench?('替-'+(item.alias||item.topic)):(item.alias||item.topic)
+											style="{{index+1>act.maximum?'color:gray;':''}}">{{item.is_bench?('替-'+(item.nickName)):(item.nickName)
 											}}</text><text wx:if="{{user.wxid==act.ownerid&&is_delete}}" class="margin-right-xs text-gray">
 											{{item.utc_time}}</text><text
 											wx:if="{{user.wxid==act.ownerid&&item.order_amount&&index+1<=act.maximum}}"
@@ -258,7 +262,7 @@
 											src="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" />
 										<wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
 										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' />
-										<text> {{item.alias||item.topic}}</text>
+										<text> {{item.nickName}}</text>
 										<text wx:if="{{is_owner}}" class="margin-left text-gray"> {{item.create_time_utc}}</text>
 									</view>
 									<!-- <view class="desc_footer">
@@ -412,7 +416,7 @@
 	<wux-white-space body-style="height:{{show_sign_up?'634rpx;':'112rpx;'}}" />
 	<van-goods-action wx:if="{{act.act_mode=='advanced'}}" class="fixed-bottom" custom-class="goods-action"
 		safe-area-inset-bottom="{{ true }}">
-		<van-goods-action-icon wx:if="{{is_owner}}" icon="setting-o" text="管理" dot bind:click="manger" />
+		<van-goods-action-icon icon="setting-o" text="管理" dot bind:click="manger" />
 		<van-goods-action-icon icon="share" text="分享" open-type="share" />
 		<van-goods-action-icon icon="wap-home" text="俱乐部" bind:click="toGroupDetail" />
 		<!-- <van-goods-action-button bind:click="signup_batch" text="多人报名" type="warning" />
@@ -444,16 +448,16 @@
 		<button disabled="{{thing.is_cancel}}" open-type="share"
 			class="cuIcon-weixin cu-btn margin-right {{show_record?'bg-cyan':'bg-blue'}}" bindtap=""
 			style="width:30%;">分享到群</button>
-		<button wx:if="{{user.wxid==act.ownerid}}" bindtap="manger" class="cu-btn margin-right bg-blue"
+		<button bindtap="manger" class="cu-btn bg-blue"
 			style="width:30%;">管理活动</button>
 		<!-- <button wx:if="{{order_info.status==0&&cur_time>act.start_time}}" disabled="{{true}}"
 			class="cuIcon-edit cu-btn margin-right bg-orange" bindtap="to_sign_in"
 			style="width:30%;">{{order_info.is_sign_in?'已签到':'签到'}}</button> -->
 		<!-- <button class="cuIcon-edit cu-btn margin-right bg-orange" bindtap="to_pay" style="width:30%;">支付</button> -->
-		<button wx:if="{{order_info.status!=0&&cur_time<act.start_time}}" disabled="{{true}}" class="cu-btn bg-red"
+		<!-- <button wx:if="{{order_info.status!=0&&cur_time<act.start_time}}" disabled="{{true}}" class="cu-btn bg-red"
 			bindtap="signup_batch" style="width:30%;">立即报名</button>
 		<button wx:if="{{order_info.status==0&&cur_time<act.close_time}}" disabled="{{true}}" class="cu-btn bg-red"
-			bindtap="cancel_order" style="width:30%;">取消报名</button>
+			bindtap="cancel_order" style="width:30%;">取消报名</button> -->
 	</view>
 
 </view>

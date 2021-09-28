@@ -1,0 +1,111 @@
+<view class="page">
+	<block wx:if="{{openid&&!user.wxid}}">
+		<!-- <block wx:if="{{hasUserInfo}}">
+			<view class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="solid-bottom padding">
+						<view class="cu-avatar xl round" style="background-image:url({{userInfo.avatarUrl}});"></view>
+					</view>
+					<view class="padding">{{userInfo.nickName}}</view>
+				</view>
+			</view>
+			<view wx:if="{{peer_list.length!=0}}" class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="padding text-xxl">
+						<text class="text-green">激活成功！</text>
+					</view>
+					<view class="padding">系统中已同步到你的信息，管理员正在审核，请耐心等待~</view>
+				</view>
+			</view>
+			<view wx:if="{{peer_list.length==0}}" class="padding-lr text-center">
+				<view class="padding-lr bg-white">
+					<view class="padding text-xxl">
+						<text class="text-red">激活失败！</text>
+					</view>
+					<view class="padding">系统中没有找到您的信息，请先线下联系群管理员加入活动群~</view>
+				</view>
+			</view>
+		</block>
+		<view wx:else class="padding text-center">
+			<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
+				<view class="padding text-xxl">
+					<button class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
+						登陆激活
+					</button>
+				</view>
+				<view class="padding">你尚未完成注册，点击按钮完成会员认证激活~</view>
+			</view>
+		</view> -->
+		<view class="padding text-center">
+			<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
+				<view class="padding text-xxl">
+					<button disabled class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
+						登陆激活
+					</button>
+				</view>
+				<view class="padding">你尚未完成激活，进入【发现】页面激活~</view>
+			</view>
+		</view>
+	</block>
+	<block wx:if="{{user.wxid}}">
+		<!-- 加载 -->
+		<view class="page-null bg-bg-white" wx:if="{{!groups_is_done}}">
+			<wux-spin nested spinning="{{ !groups_is_done }}" tip="">
+				<view style='height:500rpx'></view>
+			</wux-spin>
+		</view>
+
+		<view hidden="{{!groups_is_done}}" class="">
+			<view class="cu-list menu-avatar">
+				<block wx:if="{{owner_rooms.length!=0||user.wxid}}">
+					<!-- 推荐群组为空 -->
+					<view wx:if="{{owner_rooms.length==0}}" class="bg-white">
+						<wux-prompt visible="{{ true }}" icon="{{ msg2.icon }}" title="没有群组推荐~" text="{{ msg2.text }}"
+							buttons="{{ msg2.buttons }}" bind:click="" />
+					</view>
+					<!-- 全部群组列表 -->
+					<view class="cu-item cur" wx:for="{{owner_rooms}}" wx:key="index" bindtap="to_room_details"
+						data-index="{{index}}" data-id="{{item._id}}">
+						<view wx:if="{{!item.avatar||!item.avatar.remoteUrl}}" class="cu-avatar bg-blue lg radius">
+							{{item.topic[0]||'匿'}}
+							<view wx:if="{{item.is_vip}}" class="cu-tag badge">VIP</view>
+						</view>
+						<view wx:else class="cu-avatar radius lg" style="background-image:url({{item.avatar.remoteUrl}});">
+							<view wx:if="{{item.is_vip}}" class="cu-tag badge">VIP</view>
+						</view>
+						<view class="content">
+							<view>
+								<view class="text-cut">
+									{{item.topic||item._id}}
+								</view>
+								<!-- <view class="cu-tag round bg-orange sm">6人</view> -->
+							</view>
+							<view wx:if="{{!item.announce}}" class="text-gray text-sm flex">
+								<!-- <text class="cuIcon-weixin text-green margin-right-xs"></text> -->
+								<text class="text-cut text-blue"> {{item.roomid}}</text>
+							</view>
+							<view wx:if="{{item.announce}}" class="text-gray text-sm flex">
+								<view class="text-cut text-gray">
+									<!-- <text class="cuIcon-weixin text-green margin-right-xs"></text> -->
+									{{item.announce}}
+								</view>
+							</view>
+							<!-- <view class="text-gray text-sm flex">
+							<text class="cuIcon-weixin text-green margin-right-xs"></text>
+							<text class="text-cut"> {{item.owner_nick||item.ownerid||'待认领'}}</text>
+						</view> -->
+						</view>
+						<view wx:if="{{item.is_vip}}" class="action">
+							<view class="text-grey text-xs">bot</view>
+							<view class="{{item.boot_open?'cuIcon-noticefill text-green':'cuIcon-notice_forbid_fill text-gray'}}">
+							</view>
+						</view>
+					</view>
+				</block>
+			</view>
+		</view>
+		<view class="cu-tabbar-height"></view>
+
+	</block>
+
+</view>
