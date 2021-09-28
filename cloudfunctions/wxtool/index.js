@@ -897,7 +897,7 @@ exports.main = async (event, context) => {
   } else {
     // 非post请求，返回错误信息
 //=======
-
+  }
   } else {//仅代表调用机器人成功的情况
 //>>>>>>> main
     console.info
