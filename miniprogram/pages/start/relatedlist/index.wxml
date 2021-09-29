@@ -9,82 +9,21 @@
 					<view class="padding">{{userInfo.nickName}}</view>
 				</view>
 			</view>
-			<view wx:if="{{peer_list.length!=0}}" class="padding-lr text-center">
-				<view class="padding-lr bg-white">
-					<view class="padding text-xxl">
-						<text class="text-green">激活成功！</text>
-					</view>
-					<view class="padding">系统中已同步到你的信息，群管理员正在审核，请耐心等待~</view>
-				</view>
-			</view>
-			<view wx:if="{{peer_list.length==0}}" class="padding-lr text-center">
-				<view class="padding-lr bg-white">
-					<view class="padding text-xxl">
-						<text class="text-red">激活失败！</text>
-					</view>
-					<view class="padding text-left"><text>身份认证失败：\n1.请确认从聊天中的个人专属登记卡片进入小程序\n2.从他人的专属登记卡片进入无效</text></view>
-				</view>
-			</view>
 		</block>
 		<view wx:else class="padding text-center">
 			<view class="padding-lr bg-white text-center" style="padding:200rpx 0rpx 200rpx 0rpx;">
 
 				<view class="padding text-xxl">
-					<button disabled="{{!ops.wxid}}" class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
-						登陆激活
+					<button class="cu-btn bg-blue shadow-blur round" bindtap="getUserProfile">
+						登陆授权
 					</button>
 				</view>
-				<view wx:if="{{ops.wxid}}" class="padding"><text>{{ops.wxid}}\n\n请点击按钮完成会员认证激活~</text></view>
-				<view wx:if="{{!ops.wxid}}" class="padding">请从个人专属小程序登记卡片进入小程序进行登记~</view>
-
+				<view class="padding"><text>\n\n请点击按钮完成登陆授权~</text></view>
 			</view>
 		</view>
 	</block>
-	<!-- 栏目列表 -->
-	<!-- <view class="cu-list grid col-{{gridCol}} {{gridBorder?'':'no-border'}}">
-		<view class="cu-item" wx:for="{{iconList}}" wx:key="index" wx:if="{{index<gridCol*1}}">
-			<view class="cuIcon-{{item.icon}} text-{{item.color}}">
-				<view class="cu-tag badge" wx:if="{{item.badge!=0}}">
-					<block wx:if="{{item.badge!=1}}">{{item.badge>99?"99+":item.badge}}</block>
-				</view>
-			</view>
-			<text>{{item.name}}</text>
-		</view>
-	</view> -->
-
-	<!-- 活动推荐 -->
-	<!-- <view class="cu-bar bg-white">
-		<view class="action">
-			活动推荐
-		</view>
-		<view class="action">
-			<text class="text-sm">更多</text>
-		</view>
-	</view> -->
-
-
-	<!-- 日期切换tab -->
-	<!-- <scroll-view scroll-x class="bg-white nav" scroll-with-animation scroll-left="{{scrollLeft}}">
-			<view class="cu-item {{index==TabCur?'text-blue cur':''}}" wx:for="{{7}}" wx:key="index" bindtap="tabSelect"
-				data-id="{{index}}">
-				周{{index+1}}
-			</view>
-		</scroll-view> -->
-
 
 	<block wx:if="{{fr==''&&user.wxid}}">
-
-		<!-- 悬浮创建按钮 -->
-		<wux-fab-button wx:if="{{setting_info.allow_sub_act}}" position="bottomRight" theme="positive" direction="vertical"
-			reverse="{{ false }}" spaceBetween="10" sAngle="270" eAngle="360" buttons="{{ buttons }}" bind:change="onChange"
-			bind:click="onClick" />
-
-		<!-- 筛选排序栏	 -->
-		<view wx:if="{{filterbar}}">
-			<view>
-				<wux-filterbar items="{{ items }}" bind:change="onChange" bind:open="onOpen" bind:close="onClose" />
-			</view>
-		</view>
 
 
 		<view class="{{filterbar?'top':''}}">
@@ -182,7 +121,7 @@
 									<view class="flex justify-between">
 										<view class="text-blue" catchtap='to_room_details' data-roomid="{{item.roomid}}"><text
 												class="cuIcon-weixin text-blue text-lg margin-right-xs"></text>
-											<text class="text-blue">{{rooms_dic[item.roomid].nick||item.roomid||'...'}}</text>
+											<text class="text-blue">{{rooms_dic[item.roomid].topic||item.roomid||'...'}}</text>
 										</view>
 										<view class="text-gray text-sm flex justify-left">
 											<wux-timeago to="{{ item.create_time }}" lang="{{ zh_CN }}" />

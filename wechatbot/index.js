@@ -4,8 +4,12 @@ const {
 const { FileBox } = require('file-box')
 const request = require('request');
 
+
 const name = 'wechat-group';
 const wxKey = 'mangguo185943'
+const mqtt = require('mqtt')
+
+
 
 const puppet = 'wechaty-puppet-wechat'
 const bot = new Wechaty({
@@ -44,7 +48,10 @@ function getEventsMsg(eventName, msg) {
 }
 
 function pub_msg(datas_jsonstr) {
+
     let body = JSON.parse(datas_jsonstr)
+
+
     try {
         // 群组大师小程序提供的log接口
         let url = `https://service-a00jv7f3-1305916954.sh.apigw.tencentcs.com:443/bot/${wxKey}/message` //换成自己的后端服务地址
@@ -266,13 +273,16 @@ bot.
         // }
 
         // 请求后端接口，后端接口开发完成前注释掉
+
         pub_msg(getEventsMsg('message', payload))
+
 
         // 1. send Image
         if (/^ding$/i.test(message.text())) {
             await message.say('dong')
         }
     })
+
     .on('room-join', async (room, inviteeList, inviter) => {
         const nameList = inviteeList.map(c => c.name()).join(',')
         console.log(`Room ${await room.topic()} got new member ${nameList}, invited by ${inviter}`)
@@ -280,6 +290,19 @@ bot.
 
         let msg = `欢迎@${nameList} 加入群~`
         room.say(msg)
+
+    .on('friendship', async (friendship) => {
+
+    })
+    .on('room-leave', async (room, leaverList, remover) => {
+
+    })
+    .on('room-topic', async (room, topic, oldTopic, changer) => {
+
+    })
+    .on('room-invite', async roomInvitation => {
+
+          
     })
     .on("error", (error) => {
         log.error("TestBot", 'on error: ', error.stack);

@@ -16,12 +16,12 @@ Component({
         "selectedIconPath": "assets/images/iconfont-group-active.png",
         "text": "群组"
       },
-      {
-        "pagePath": "/pages/start/usercenter",
-        "iconPath": "cuIcon-myfill",
-        "selectedIconPath": "assets/images/iconfont-about1-active.png",
-        "text": "我的"
-      }
+      // {
+      //   "pagePath": "/pages/start/usercenter",
+      //   "iconPath": "cuIcon-myfill",
+      //   "selectedIconPath": "assets/images/iconfont-about1-active.png",
+      //   "text": "我的"
+      // }
     ]
   },
   attached() {

@@ -2,7 +2,7 @@
 const cloud = require('wx-server-sdk')
 var util = require('./util')
 
-cloud.init()
+cloud.init({env: 'cloud1-9g9f1jcs9740dca9'})
 const db = cloud.database()
 const _ = db.command
 // 云函数入口函数

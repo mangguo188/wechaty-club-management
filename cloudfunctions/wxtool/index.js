@@ -1,9 +1,36 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
-cloud.init()
+//<<<<<<< main
+// cloud.init()
+cloud.init({
+  env: 'cloud1-9g9f1jcs9740dca9'
+})
 const db = cloud.database()
 const _ = db.command
 const $ = db.command.aggregate
+const {
+  createHash
+} = require('crypto');//等同于let createHash=_crypto.createHash
+const { config } = require('process')
+// const { use } = require('puppeteer-extra')
+
+// 消息类型码
+const HEART_BEAT = 5005
+const RECV_TXT_MSG = 1
+const RECV_PIC_MSG = 3
+const USER_LIST = 5000
+const GET_USER_LIST_SUCCSESS = 5001
+const GET_USER_LIST_FAIL = 5002
+const TXT_MSG = 555
+const PIC_MSG = 500
+const AT_MSG = 550
+const CHATROOM_MEMBER = 5010
+const CHATROOM_MEMBER_NICK = 5020
+const PERSONAL_INFO = 6500
+const DEBUG_SWITCH = 6000
+const PERSONAL_DETAIL = 6550
+const DESTROY_ALL = 9999
+//>>>>>>> main
 
 let is_new_group = 1
 
@@ -81,11 +108,6 @@ const get_req = (wxKey, msgType, msg, roomid, wxid) => {
   if (msgType == 'Image') {
     // 1. send Image
     return {
-      "reqId": "442c1da4-9d3a-4f9b-a6e9-bfe858e4ac43",
-      "method": "thing.command.invoke",
-      "version": "1.0",
-      "timestamp": time,
-      "name": "pubMessage",
       "params": {
         wxid,
         msg,
@@ -131,7 +153,7 @@ const get_req = (wxKey, msgType, msg, roomid, wxid) => {
     // {
     //   "description": "测试卡片",
     //   "thumbnailUrl": "http://mmbiz.qpic.cn/mmbiz_jpg/mLJaHznUd7O4HCW51IPGVarcVwAAAuofgAibUYIct2DBPERYIlibbuwthASJHPBfT9jpSJX4wfhGEBnqDvFHHQww/0",
-    //   "title": "欢迎使用群组大师小程序",
+    //   "title": "欢迎使用活动报名助手小程序",
     //   "url": "https://mp.weixin.qq.com/s/m6qbYo6eFR8RbIj25Xm4rQ"
     // }
     return {
@@ -499,6 +521,7 @@ const get_cur_all_orders = async (act, member) => {
   return res.data
 }
 
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
@@ -518,18 +541,55 @@ exports.main = async (event, context) => {
   } = event
   let wxKey = pathParameters.wxKey
   let to = []
-  let def_req = {
+  let def_req = {//成功后显示的代码
     code: 200,
     'msg': 'success',
     data: {}
   }
   let req = {}
-
+// console.info('这个是event.requestContext.httpMethod',event.requestContext.httpMethod) 输出为POST 说明已成功进入if语句
   if (requestContext.httpMethod == 'POST') {
-
     body = JSON.parse(body)
     console.info('body', body)
 
+//<<<<<<< main
+//=======
+    if (body.events && body.events['room_join']) {
+      let join_in_info = body.events['room_join']
+      // console.info('这个是join_in_info',join_in_info)//更改
+      let inviteeList = join_in_info.inviteeList //被邀请者名单
+      // console.info('这个是inviteeList',inviteeList)//更改 输出了发消息的人的信息
+      let atUserIdList = []
+
+      for (let user in inviteeList) {//数组循环遍历 此时user指代每个属性的名称
+        let data = {}
+        data.room = {
+          roomid: join_in_info.room.roomid
+        }
+        // console.info('这个是join_in_info.room.roomid',join_in_info.room.roomid)
+        data.user = inviteeList[user].payload
+        data.user.wxid = data.user.id
+        data.user.nickName = data.user.name
+        data.alias = ''
+        // 更新会员信息
+        await update_member(data)
+        atUserIdList.push(data.user.id)
+      }
+
+      let res_white_list = await db.collection('room').where({//计算有多少个活动群
+        roomid: join_in_info.room.id,
+        is_vip: true,
+        boot_open: true
+      }).count()
+
+      if (res_white_list.total > 0) {
+        let welcome_info = '欢迎加入，回复<帮助>二字获取指令集，快速学习如何参加群内活动；回复<绑定>可激活进入小程序查看历史活动~'
+        let welcome = get_req(wxKey, 'Text', welcome_info, join_in_info.room.id, atUserIdList)
+        return welcome
+      }
+    }
+
+//>>>>>>> main
     if (body.events && body.events.message) {
       let data = body.events.message
 
@@ -572,12 +632,129 @@ exports.main = async (event, context) => {
         wxid
       }
 
+
       let msg = ''
 
-      if ((/报名\d人成功!/g.test(content.replace(/\s*/g, "")) || /取消\d人成功!/g.test(content.replace(/\s*/g, ""))) && !['wxid_0o1t51l3f57221', ].includes(wxid)) {
+      if (content.replace(/\s*/g, "").slice(0, 2) == '代@' && content.replace(/\s*/g, "").slice(-2) == '取消' && room.ownerid == wxid) {
+        nick = content.replace(/\s*/g, "").slice(2).slice(0, -2).replace(/^\s*|\s*$/g, "")
+        let member_info = await db.collection('member').where(_.or({
+          nick,
+          roomid
+        }, {
+          alias: nick,
+          roomid
+        })).get()
+        console.debug(member_info) //会员信息
+        if (member_info.data.length > 0) {
+          member = member_info.data[0]
+          let add_num = 1
+          let act = await get_act(data)
+
+          if (!act._id) {
+            msg = "群内无可报名活动，可查看历史活动https://mp.weixin.qq.com/s/m6qbYo6eFR8RbIj25Xm4rQ"
+
+          } else {
+
+            let cur_orders = await get_cur_all_orders(act, member) //获取当前用户全部订单
+
+            if (cur_orders.length) {
+
+              let cancel_num = await cancel_sign_in_act2(act, cur_orders, add_num, create_time) //检查取消报名和替补的情况
+
+              // 获取全部订单
+              let orders = await get_act_orders(act)
+
+              if (cancel_num[1].length) {
+                msg = '【 ' + nick + '】取消' + cancel_num[2] + '人成功,替补转正!\n\n'
+                msg = order_text(act, orders, msg) //活动报名拼接
+                let atUserIdList = cancel_num[1]
+                atUserIdList.push(cur_orders[0].wxid)
+                req = get_req(wxKey, 'Text', msg, roomid, atUserIdList) //生成响应信息
+              } else {
+                msg = '【' + nick + '】取消' + cancel_num[2] + '人成功!\n\n'
+                msg = order_text(act, orders, msg)
+                req = get_req(wxKey, 'Text', msg, roomid, member.wxid)
+              }
+
+            } else {
+              msg = nick + ' 未报名活动'
+              req = get_req(wxKey, 'Text', msg, roomid, wxid)
+            }
+
+          }
+        } else {
+          msg = nick + ' 未报名活动'
+          req = get_req(wxKey, 'Text', msg, roomid, wxid)
+        }
+      } else if (content.replace(/\s*/g, "").slice(0, 2) == '代@' && (content.replace(/\s*/g, "").slice(-2) == '取消' || content.replace(/\s*/g, "").slice(-2) == '报名') && room.ownerid != wxid) {
+        msg = '不要淘气，只有群主可以代报名/取消哦~'
+        req = get_req(wxKey, 'Text', msg, roomid, wxid)
+      } else if (content.replace(/\s*/g, "").slice(0, 4) == '@大师加' && content.replace(/\s*/g, "").slice(-2) == '名额' && room.ownerid == wxid) {
+
+        let more_num = Number(content.replace(/\s*/g, "").slice(4, 5))
+        let act = await get_act(data)
+        if (!act._id) { //no act is active
+          msg = "群内没有可报名/调整的活动"
+          req = get_req(wxKey, 'Text', msg, roomid, wxid)
+        } else {
+
+          let update_act_maximum = await db.collection('activity').doc(act._id).update({
+            data: {
+              maximum: act.maximum + more_num
+            }
+          })
+
+          act.maximum = act.maximum + more_num
+
+          let cancel_num = await bench_sign_in_act(act, more_num, create_time)
+          // 获取全部订单
+          let orders = await get_act_orders(act)
+
+          if (cancel_num[1].length) {
+            msg = '活动新增' + cancel_num[0] + '个名额,替补转正!\n\n'
+            msg = order_text(act, orders, msg)
+
+            let atUserIdList = cancel_num[1]
+            // atUserIdList.push(wxid)
+            req = get_req(wxKey, 'Text', msg, roomid, atUserIdList)
+          } else {
+            msg = '@所有人 活动新增' + cancel_num[0] + '个名额!\n\n'
+
+            msg = order_text(act, orders, msg)
+            req = get_req(wxKey, 'Text', msg, roomid, wxid)
+          }
+
+        }
+      } else if (content.replace(/\s*/g, "").slice(0, 2) == '代@' && content.replace(/\s*/g, "").slice(-2) == '报名' && room.ownerid == wxid) {
+        nick = content.replace(/\s*/g, "").slice(2).slice(0, -2).replace(/^\s*|\s*$/g, "")
+        let member_info = await db.collection('member').where(_.or({
+          nick,
+          roomid
+        }, {
+          alias: nick,
+          roomid
+        })).get()
+        console.debug(member_info)
+        if (member_info.data.length > 0) {
+          member = member_info.data[0]
+          let add_num = 1
+          // 查询俱乐部活动信息
+          let act = await get_act(data)
+          if (!act._id) { //no act is active
+            msg = "群内没有可报名的活动"
+          } else { //have active act
+            msg = await sign_in_act2(act, member, add_num, create_time)
+          }
+          req = get_req(wxKey, 'Text', msg, roomid, member.wxid)
+        } else {
+          msg = nick + ' 未查询到该成员'
+          req = get_req(wxKey, 'Text', msg, roomid, wxid)
+        }
+      } else if ((/报名\d人成功!/g.test(content.replace(/\s*/g, "")) || /取消\d人成功!/g.test(content.replace(/\s*/g, ""))) && !['wxid_0o1t51l3f57221',].includes(wxid)) {
         msg = '复制粘贴报名无效！请直接回复 报名 或 报名2人 完成报名~'
         req = get_req(wxKey, 'Text', msg, roomid, wxid)
       } else if (content.replace(/\s*/g, "") == '帮助') {
+//>>>>>>> main
         let keywords_base = {
           '【报名】': '报名活动1人',
           '【取消】': '取消报名1人',
@@ -619,7 +796,7 @@ exports.main = async (event, context) => {
           // 查询俱乐部活动信息
           let act = await get_act(data)
           if (!act._id) {
-            msg = "群内没有可报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+            msg = "群内没有可报名的活动"
           } else {
             msg = await sign_in_act2(act, member, add_num, create_time)
           }
@@ -640,7 +817,7 @@ exports.main = async (event, context) => {
 
 
         if (!act._id) {
-          msg = "群内没有可取消报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+          msg = "群内没有可取消报名的活动"
           req = get_req(wxKey, 'Text', msg, roomid, wxid)
 
 
@@ -707,11 +884,12 @@ exports.main = async (event, context) => {
         msg: body
       }
     })
-  } else {
-    // 非post请求，返回错误信息
+
+  } else {//仅代表调用机器人成功的情况
     console.info
     req = def_req
     req.data = event
   }
   return req
 }
+
