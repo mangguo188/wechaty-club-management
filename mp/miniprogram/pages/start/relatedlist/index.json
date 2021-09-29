@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "发现",
+  "navigationBarTitleText": "ClubMaster",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "wux-floating-button": "../../../dist/floating-button/index",

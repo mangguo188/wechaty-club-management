@@ -34,10 +34,13 @@
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
-    "showES6CompileOption": false
+    "disableUseStrict": false,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useCompilerPlugins": false
   },
   "appid": "wxe3d1b7a7be57750f",
-  "projectname": "%E6%B4%BB%E5%8A%A8%E6%8A%A5%E5%90%8D%E5%8A%A9%E6%89%8B",
+  "projectname": "%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8A%A5%E5%90%8D",
   "libVersion": "2.15.0",
   "compileType": "miniprogram",
   "simulatorType": "wechat",

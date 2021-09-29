@@ -106,12 +106,12 @@ Page({
         url: '',
         status: true
       },
-      {
-        text: '费用结算',
-        action: 'clear_expense',
-        url: '',
-        status: true
-      },
+      // {
+      //   text: '费用结算',
+      //   action: 'clear_expense',
+      //   url: '',
+      //   status: true
+      // },
       // {
       //   text: '到场统计',
       //   action: '',
