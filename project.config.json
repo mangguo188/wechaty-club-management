@@ -20,9 +20,9 @@
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
     "lazyloadPlaceholderEnable": false,
-    "useMultiFrameRuntime": false,
-    "useApiHook": false,
-    "useApiHostProcess": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -34,13 +34,10 @@
     "packNpmManually": false,
     "packNpmRelationList": [],
     "minifyWXSS": true,
-    "disableUseStrict": false,
-    "minifyWXML": true,
-    "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "showES6CompileOption": false
   },
   "appid": "wxe3d1b7a7be57750f",
-  "projectname": "微信机器人报名",
+  "projectname": "%E6%B4%BB%E5%8A%A8%E6%8A%A5%E5%90%8D%E5%8A%A9%E6%89%8B",
   "libVersion": "2.15.0",
   "compileType": "miniprogram",
   "simulatorType": "wechat",
