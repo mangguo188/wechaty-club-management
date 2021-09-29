@@ -1,0 +1,587 @@
+<!-- 判断是否在活动群组 -->
+<view wx:if="{{act_openGid}}" hidden="ture">
+	<open-data type="groupName" default-text="无效群" open-gid="{{act_openGid}}" binderror="not_in_group"></open-data>
+</view>
+
+<wux-spin nested spinning="{{ act_is_loading }}" tip="" wx:if="{{act_is_loading}}">
+	<view style='height:500rpx'></view>
+</wux-spin>
+
+<view class="page" wx:else>
+	<!-- 活动卡片 -->
+
+	<!-- <wux-notice-bar wx:if="{{!hassignup&&isfull&&!isend}}" mode="closable" content="活动已报满! 有人取消报名才可以继续报名..." /> -->
+	<!-- <wux-notice-bar wx:if="{{isend&&!hassignup}}" mode="closable" content="活动已开始! 下一次吧..." /> -->
+
+	<wux-notice-bar wx:if="{{show_set_msg}}" mode="link" action="" bind:click="" wux-class="notice-bar" icon=""
+		content="开启订阅消息订阅可接收实时通知">
+		<text slot="footer" style="color: #a1a1a1; margin-left: 10px;" bindtap="set_sub_msg">去订阅</text>
+	</wux-notice-bar>
+
+	<!-- 3.0----活动状态显示 -->
+	<wux-notice-bar wx:if="{{act.maximum}}" loop mode="closable"
+		content="{{act.status==0&&!act.is_active&&act.open_time>cur_time?act.open_time_utc+'开放报名；':''}}{{!act.deadline||act.deadline==0?'活动开始前可随时取消已报名':('报名后，活动开始前'+act.deadline+'小时内不能取消已报名')}}" />
+
+	<!-- 3.0----活动基本信息 -->
+	<view wx:if="{{!is_detail_mode&&act.act_mode=='simple'}}">
+
+		<view class="cu-card article no-card">
+
+			<view class="cu-item shadow" style="padding-bottom: 0rpx;">
+
+				<view wx:if="{{!is_shareing&&!act.roomid}}" class="title">
+					<view class="text-cut">
+						<view wx:if="{{act.status!=0}}" bindtap="manger" class="cu-tag radius bg-red light sm margin-right">
+							{{act.status!=0?'活动已取消':'报名中'}}</view>
+						{{act.decs}}
+					</view>
+				</view>
+				<view wx:if="{{!is_shareing&&!act.roomid}}" class="content text-gray text-sm">
+					<view class="desc">
+						<view wx:if="{{act.lasttime}}" class="text-sm">
+							<text class="cuIcon-locationfill text-blue margin-right"></text>
+							<text class="text-df">{{act.lasttime}}</text>
+						</view>
+						<view class="text-sm">
+							<text class="cuIcon-locationfill text-blue margin-right"></text>
+							<text class="text-df">{{act.location_name||'--'}}</text>
+						</view>
+						<view class="text-sm">
+							<text class="cuIcon-dianhua text-blue margin-right"></text>
+							<text class="text-df">{{act.contact_info.name}} {{act.contact_info.cellphone}}</text>
+							<view bindtap="manger" class="cu-tag radius bg-blue light sm margin-left">管理</view>
+						</view>
+						<view wx:if="{{act.group_name}}" class="text-sm">
+							<text class="cuIcon-group_fill text-blue margin-right"></text>
+							<open-data class="text-df" type="groupName" default-text="{{act.group_name}}"
+								open-gid="{{act.group_name}}"></open-data>
+						</view>
+					</view>
+				</view>
+
+				<view class="flex-sub margin" style="">
+					<view class="text-df text-bold text-gray">
+						<!-- <text wx:if="{{!is_shareing}}" decode="{{true}}">&emsp;&emsp;</text> -->
+						<!-- <text
+							wx:if="{{act.status==0&&!act.is_active&&act.open_time>cur_time}}">{{act.open_time_utc+'开放报名~'}}\n\n</text> -->
+
+						<text wx:if="{{is_shareing}}" class="text-red">@所有人 </text>
+						<text wx:if="{{act.status==0&&act.maximum}}"
+							class="text-red text-bold text-lg">{{act.is_active?'活动报名中':(!act.is_active&&act.open_time>cur_time?(act.open_time_utc+'开放报名'):'报名已截止')}}\n\n</text>
+						<text wx:if="{{act.status==1&&act.maximum}}" class="text-red text-bold text-lg">活动已取消\n\n</text>
+
+						<text wx:if="{{!act.maximum}}" class="text-red text-bold text-lg">【行程类型】{{act.act_type}}\n\n</text>
+						<view wx:if="{{act.timenlp.time.timestamp||act.timenlp.time.timespan}}"
+							class="flex justify-start margin-tb">
+							<view wx:if="{{act.timenlp.time.timestamp}}" class="cu-tag radius bg-blue light sm round margin-right">
+								<text class="cuIcon-timefill margin-right-xs"></text>{{act.timenlp.time.timestamp}}
+							</view>
+							<view wx:if="{{act.timenlp.time.timespan}}" class="cu-tag radius bg-blue light sm round margin-right">
+								<text
+									class="cuIcon-timefill margin-right-xs"></text>{{act.timenlp.time.timespan[0]}}-{{act.timenlp.time.timespan[1]}}
+							</view>
+						</view>
+						<text class="{{!is_shareing?'':'text-black'}}">{{act.decs}}\n\n</text>
+						<view wx:if="{{act.contact_info&&act.contact_info.name}}" class="text-sm">
+							<text class="cuIcon-dianhua text-blue margin-right"></text>
+							<text class="text-df">{{act.contact_info.name}} {{act.contact_info.cellphone||act.wxid}}</text>
+							<text wx:if="{{act.contact_info.cellphone}}" class="text-green" bindtap="to_call"> 拨打</text>
+							<text wx:if="{{!act.contact_info.cellphone&&act.wxid}}" class="text-green" bindtap="copytext"
+								data-text="{{act.wxid}}"> 复制</text>
+						</view>
+						<view wx:if="{{act.roomid}}">
+							<text><text class="cuIcon-weixin text-blue margin-right"></text><text
+									class="text-blue margin-right">{{act.roomnick||act.roomid}}</text>
+							</text>
+							<view wx:if="{{!act.maximum}}" class="cu-tag light sm round margin-right"><text
+									class="cuIcon-timefill text-grey margin-right-xs"></text>
+								{{act.utc_time}}
+							</view>
+						</view>
+
+					</view>
+				</view>
+
+			</view>
+		</view>
+
+	</view>
+
+
+	<!-- 群活动详情============================================= -->
+	<van-card wx:if="{{is_detail_mode&&act.act_mode=='advanced'}}" maximum="" num="" tag="{{act.status!=0?'活动取消':''}}"
+		price="" origin-price="" desc="活动类型-{{act.type.name}}" title="{{act.title}}"
+		thumb="{{act.group_name=='个人专属'?CONFIG.CLOUD_URL+'/avatars/'+act._openid+'.jpg':'cloud://test-958d13.2fb3-test-958d13-1251176925/logos/7255d08f-7348-4112-8b8a-466f78e845b1.jpg'}}"
+		onClickThumb="" titleStyle="font-size:28rpx;">
+
+		<view slot="bottom">
+			<wux-white-space body-style="height: 8.5rpx" />
+			<view style='color:ed3f14;' wx:if="{{act.price.type==0}}">
+				<text style='color:#495060;'>男</text>
+				<text style='color:#ed3f14'>￥{{act.price.male_price}}</text>
+				<text style='color:#495060;'> / </text>
+				<text style='color:#495060;'>女</text>
+				<text style='color:#ed3f14'>￥{{act.price.women_price}}</text>
+			</view>
+			<view style='color:ed3f14;' wx:else>
+				<text style='color:#ed3f14'>{{act.price.type_text}}</text>
+			</view>
+			<wux-white-space body-style="height: 8.5rpx" />
+			<view>
+				<text style='color:#495060;'>距离开始 </text>
+				<text style='color:#ed3f14'>{{days}}</text>
+				<text style='color:#495060;font-size:26rpx'> 天 </text>
+				<text style='color:#ed3f14'>{{hours}}:{{min}}:{{sec}}</text>
+
+				<text style="float:right;" bindtap="change_mode">接龙模式</text>
+			</view>
+		</view>
+
+	</van-card>
+
+	<!-- 群活动模式详情 -->
+	<van-card wx:if="{{!is_detail_mode&&act.act_mode=='advanced'}}" maximum="" num="" tag="{{act.status!=0?'活动取消':''}}"
+		price="" origin-price="" desc="" title="{{act.title}}" thumb="{{CONFIG.CLOUD_URL}}/logos/{{act.group_id}}.jpg"
+		onClickThumb="" bindtap='todetails' data-aid="{{act._id}}" data-index="{{index}}" titleStyle="font-size:28rpx;">
+		<view slot="bottom">
+			<view style="line-height: 44rpx;">
+				<van-icon name="wap-home-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+					size="10" />
+				<text style="margin-left:10rpx;font-size:24rpx;">{{act.group_name}}</text>
+			</view>
+			<view style="line-height: 44rpx;">
+				<van-icon name="location-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+					size="10" />
+				<text style="margin-left:10rpx;font-size:24rpx;">{{act.location_name}}</text>
+			</view>
+			<view style="line-height: 44rpx;">
+				<van-icon name="clock-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+					size="10" />
+				<text style="margin-left:10rpx;font-size:24rpx;">{{act.act_time.text+'~'+act.act_time.end_text||''}}</text>
+				<text style="margin-left:30rpx;"></text>
+				<van-icon name="friends-o" class="van-cell__left-icon-wrap" custom-class="van-cell__left-icon" color=""
+					size="10" />
+				<text style="margin-left:10rpx;font-size:24rpx;">{{act.total_num}}/{{act.maximum}}</text>
+				<van-button size="mini" customStyle='float:right' plain type="primary" round bindtap="change_mode">活动详情
+				</van-button>
+			</view>
+
+		</view>
+
+	</van-card>
+
+
+	<!-- 3.0----报名信息 -->
+	<block wx:if="{{!is_detail_mode&&act.maximum}}">
+		<view class="cu-card article no-card">
+			<view class="cu-item shadow">
+				<view class="title">
+					<view class="text-cut">
+						<view wx:if="{{!thing.is_cancel}}" class="cu-tag radius bg-blue light sm">已报
+							{{total_num||j_orders.length}}/{{act.maximum}}人</view>
+
+						<!-- <view wx:if="{{act.ownerid==user.wxid}}" bindtap="update_act_status"
+							class="cu-tag radius bg-{{act.status==0?'red':'green'}} light sm">
+							{{act.status==0?'结束活动':'恢复活动'}}</view>
+
+						<view wx:if="{{act.ownerid==user.wxid}}" bindtap="set_is_active"
+							class="cu-tag radius bg-{{act.is_active?'red':'green'}} light sm">
+							{{act.is_active?'停止报名':'开启报名'}}</view> -->
+
+						<view wx:if="{{j_orders.length>3}}" class="cu-tag radius bg-blue sm">
+							<navigator url="/pages/start/tools/index" hover-class="navigator-hover">PK计分牌</navigator>
+						</view>
+
+						<view wx:if="{{openid=='ofysU0bNL8alK8HKO_Rz6kUiNg1w'}}" class="cu-tag radius bg-blue sm">
+							<navigator url="/pages/start/tiwtter/index" hover-class="navigator-hover">发布现场图文</navigator>
+						</view>
+
+						<view wx:if="{{user.wxid==act.ownerid}}" class="cu-tag radius bg-blue sm">
+							+ 添加报名
+						</view>
+
+						<view wx:if="{{user.wxid==act.ownerid}}" bindtap="show_detele"
+							class="cu-tag radius {{is_delete?'line-blue':'bg-blue'}} sm">
+							{{is_delete?'退出删除':'- 删除报名'}}
+						</view>
+
+						<!-- <view wx:if="{{!act.is_active}}" class="cu-tag radius bg-blue light sm">
+							<navigator url="/pages/start/tiwtter/index" hover-class="navigator-hover">现场图片</navigator>
+						</view> -->
+
+
+						<view wx:if="{{is_full&&!thing.is_cancel}}" class="cu-tag radius bg-red light sm margin-right">报名人数已满</view>
+						<view wx:if="{{thing.is_cancel}}" class="cu-tag radius bg-red light sm margin-right">活动已取消，咨询联系人了解详情~</view>
+					</view>
+				</view>
+				<view class="content">
+					<view class="desc">
+						<!-- <wux-spin nested spinning="{{!orders_items_is_done&&!act_is_loading}}" tip=""
+							wx:if="{{!orders_items_is_done&&!act_is_loading}}">
+							<block style='height:100rpx'></block>
+						</wux-spin> -->
+						<wux-virtual-list wx:if="{{j_orders.length>0}}" id="wux-virtual-list" enablePageScroll height="555"
+							itemHeight="100" itemBuffer="30" disableScroll="{{ disableScroll }}" bind:change="">
+							<wux-virtual-item wx:for="{{ j_orders }}" wx:key="index">
+								<view class="item2">
+									<view class="index2" style="{{index+1>act.maximum?'color:gray;':''}}">
+										<text wx:if="{{user.wxid==act.ownerid&&is_delete}}"
+											class="cuIcon-delete text-red margin-right-xs"></text>{{(index+1)+'.'}}
+									</view>
+									<view class="desc_2">
+
+										<!-- <wux-avatar body-style="background-color: #f6f6f6;margin:5rpx 10rpx;" shape="square" size="small"
+											src="{{item.member.avatar.remoteUrl}}" /> -->
+										<view class="cu-avatar bg-blue sm radius margin-right">
+											{{item.member.nickName[0]||'匿'}}
+											<view class="cu-tag badge">{{item.member.gender==1?'男':'女'}}</view>
+										</view>
+										<!-- <wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
+										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' /> -->
+										<text
+											style="{{index+1>act.maximum?'color:gray;':''}}">{{item.is_bench?('替-'+(item.nickName)):(item.nickName)
+											}}</text><text wx:if="{{user.wxid==act.ownerid&&is_delete}}" class="margin-right-xs text-gray">
+											{{item.utc_time}}</text><text
+											wx:if="{{user.wxid==act.ownerid&&item.order_amount&&index+1<=act.maximum}}"
+											class="margin-left margin-right-xs text-red"
+											bindtap="preview">{{item.paid?'已支付':'待支付'}}￥{{item.order_amount}}</text>
+									</view>
+									<!-- <view class="desc_footer">
+										          </view> -->
+								</view>
+							</wux-virtual-item>
+						</wux-virtual-list>
+						<wux-virtual-list wx:if="{{j_orders2.length>0}}" id="wux-virtual-list" enablePageScroll height="555"
+							itemHeight="100" itemBuffer="30" disableScroll="{{ disableScroll }}" bind:change="">
+							<wux-virtual-item wx:for="{{ j_orders }}" wx:key="index">
+								<view class="item2">
+									<view class="index2" style="{{j_orders.length-index>act.maximum?'color:red;':''}}">
+										{{item.is_bench?'替补':((j_orders.length-index)+'#') }}</view>
+									<view class="desc_2">
+										<wux-avatar body-style="background-color: #f6f6f6;margin:5rpx 10rpx;" shape="square" size="small"
+											src="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" />
+										<wux-icon wx:if="{{item.gender==1}}" type="ios-male" size='12' color='#576b95' />
+										<wux-icon wx:if="{{item.gender==2}}" type="ios-female" size='12' color='#ef473a' />
+										<text> {{item.nickName}}</text>
+										<text wx:if="{{is_owner}}" class="margin-left text-gray"> {{item.create_time_utc}}</text>
+									</view>
+									<!-- <view class="desc_footer">
+				          </view> -->
+								</view>
+							</wux-virtual-item>
+						</wux-virtual-list>
+
+						<text class="text-df text-gray" wx:if="{{orders_items.length==0&&orders_items_is_done}}">暂无报名信息</text>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<view wx:if="{{scoreboards.length}}" class="cu-bar bg-white solid-bottom margin-top">
+			<view class="action">
+				<view class="cu-tag radius bg-blue light sm">PK战报（{{scoreboards.length}}局）</view>
+			</view>
+		</view>
+
+		<view class="cu-list menu {{menuBorder?'sm-border':''}} {{menuCard?'card-menu margin-top':''}}">
+			<view class="cu-item" wx:for="{{scoreboards}}" wx:key="index" bindtap="to_scoreboard" data-i="{{index}}">
+				<view class="content padding-tb-sm">
+					<view class="text-df">
+						<!-- <text class="cuIcon-clothesfill text-blue margin-right-xs"></text> -->
+						<view class="cu-avatar-group">
+							<view class="cu-avatar round sm"
+								style="background-image:url({{item.scoreboard_info.players.l1.member.avatar.remoteUrl}});">
+							</view>
+							<view class="cu-avatar round sm"
+								style="background-image:url({{item.scoreboard_info.players.l2.member.avatar.remoteUrl}});">
+							</view>
+						</view>
+						VS
+						<view class="cu-avatar-group">
+							<view class="cu-avatar round sm"
+								style="background-image:url({{item.scoreboard_info.players.r1.member.avatar.remoteUrl}});">
+							</view>
+							<view class="cu-avatar round sm"
+								style="background-image:url({{item.scoreboard_info.players.r2.member.avatar.remoteUrl}});">
+							</view>
+						</view>
+					</view>
+					<view class="text-gray text-sm">
+						<!-- <text class="cuIcon-infofill margin-right-xs"></text> -->
+						<text>{{item.scoreboard_info.name||'左一/左二 VS 右一/右二'}}</text>
+						<text>\n{{item.scoreboard_info.start_time_utc}}</text>
+					</view>
+				</view>
+				<view class="action">
+					{{item.scoreboard_info.latest.left+':'+item.scoreboard_info.latest.right}}
+				</view>
+			</view>
+		</view>
+
+		<wux-wing-blank wx:if="{{order_info.status==0||orders.length>3}}" body-style="padding:10rpx 5rpx;">
+			<ad class="margin-bt" unit-id="adunit-f09d44f2196e4947" style='border-radius:5px;'></ad>
+		</wux-wing-blank>
+
+	</block>
+
+	<!-- 详情模式 -->
+	<block wx:if="{{is_detail_mode&&act.act_mode=='advanced'}}">
+		<wux-wing-blank body-style="padding:10rpx 5rpx;">
+			<van-cell iconSize='13' customStyle='padding:5rpx 0rpx;font-size:26rpx;'
+				title="{{act.act_time.text+'~'+act.act_time.end_text||''}}" icon="clock-o" border="{{ false }}" />
+			<van-cell iconSize='13' customStyle='padding:5rpx 0rpx;font-size:26rpx;' title="{{act.location_name}}"
+				icon="location-o" border="{{ false }}" />
+			<van-cell iconSize='13' bindtap="toGroupDetail" customStyle='padding:5rpx 0rpx;font-size:26rpx;' icon="wap-home-o"
+				border="{{ false }}" is-link>
+				<open-data slot='title' class="padding-fr" type="groupName" default-text="{{act.group_name||'未知群组'}}"
+					open-gid="{{act.group_name}}"></open-data>
+			</van-cell>
+			<!-- <van-cell iconSize='13' bindtap="to_call" customStyle='padding:5rpx 0rpx;font-size:26rpx;' title="{{act.contact_info.name+' '+act.contact_info.cellphone}}" icon="contact" border="{{ false }}">
+        <view slot="right-icon">
+          <van-icon name="phone" size="16px" color="#33cd5f" custom-class="icon" />
+        </view>
+      </van-cell> -->
+
+			<!-- 现场图片 -->
+			<wux-white-space wx:if="{{cur_time>act.start_time}}" body-style="height: 10rpx;background-color: #fff;" />
+			<van-cell wx:if="{{cur_time>act.start_time}}" iconSize='13' customStyle='padding:5rpx 0rpx;font-size:26rpx;'
+				title="现场图片" value="查看全部" icon="photo-o" border="{{ false }}" url='/pages/start/tiwtter/index' is-link />
+
+		</wux-wing-blank>
+
+		<van-collapse value="{{show_orders}}" data-key="show_orders" bind:change="upload" border="{{false}}">
+			<van-collapse-item border="{{false}}">
+				<view slot="title">
+					已报{{total_num||j_orders.length}}人 / 限{{act.maximum}}人
+					<van-icon name="" custom-class="van-icon-question" />
+				</view>
+
+				<wux-virtual-list wx:if="{{orders.length>0&&orders_items_is_done}}" id="wux-virtual-list" enablePageScroll
+					height="555" itemHeight="100" itemBuffer="30" disableScroll="{{ disableScroll }}" bind:change="onChange">
+					<wux-virtual-item wx:for="{{ orders }}" wx:key="index">
+						<view class="item">
+							<view class="index">{{ (index+1)+'#' }}</view>
+							<view class="desc">
+								<wux-avatar body-style="background-color: #f6f6f6;margin:5rpx 10rpx;" shape="square" size="small"
+									src="{{CONFIG.CLOUD_URL+'/avatars/'+item._openid+'.jpg'}}" /> {{item.contact_info.name}}
+							</view>
+							<view class="desc_footer">
+								<block wx:if="{{item.order_items[0].num}}">
+									<wux-icon type="ios-male" size='12' color='#576b95' />
+									<text> ×{{item.order_items[0].num}} </text>
+								</block>
+								<block wx:if="{{item.order_items[1].num}}">
+									<wux-icon type="ios-female" size='12' color='#ef473a' />
+									<text> ×{{item.order_items[1].num}}</text>
+								</block>
+							</view>
+						</view>
+					</wux-virtual-item>
+				</wux-virtual-list>
+				<text class="text-df text-gray" wx:if="{{orders.length==0&&orders_items_is_done}}">暂无报名信息</text>
+
+				<!-- <wux-spin nested spinning="{{!orders_items_is_done}}" tip="" wx:if="{{!orders_items_is_done&&!act_is_loading}}">
+					<view style='height:100rpx'></view>
+				</wux-spin> -->
+
+			</van-collapse-item>
+		</van-collapse>
+	</block>
+
+
+	<block wx:if="{{is_detail_mode&&act.act_mode=='advanced'}}">
+
+		<van-collapse value="{{show_orders}}" data-key="show_orders" bind:change="upload_decs" border="{{false}}">
+			<van-collapse-item border="{{false}}">
+				<view slot="title">
+					活动说明
+					<van-icon name="" custom-class="van-icon-question" />
+				</view>
+
+				<rich-text wx:if="{{act.decs_rich}}" style="padding:0rpx 10rpx;font-size:24rpx;" nodes="{{act.decs_rich}}"
+					bindtap=""></rich-text>
+				<block wx:else>{{act.decs}}</block>
+
+			</van-collapse-item>
+		</van-collapse>
+
+		<wux-wing-blank wx:if="{{order_info.status==0}}" body-style="padding:10rpx 5rpx;">
+			<ad unit-id="adunit-f09d44f2196e4947" style='border-radius:5px;'></ad>
+		</wux-wing-blank>
+	</block>
+
+
+
+	<!-- 底部操作按钮 -->
+	<wux-white-space body-style="height:{{show_sign_up?'634rpx;':'112rpx;'}}" />
+	<van-goods-action wx:if="{{act.act_mode=='advanced'}}" class="fixed-bottom" custom-class="goods-action"
+		safe-area-inset-bottom="{{ true }}">
+		<van-goods-action-icon icon="setting-o" text="管理" dot bind:click="manger" />
+		<van-goods-action-icon icon="share" text="分享" open-type="share" />
+		<van-goods-action-icon icon="wap-home" text="俱乐部" bind:click="toGroupDetail" />
+		<!-- <van-goods-action-button bind:click="signup_batch" text="多人报名" type="warning" />
+    <van-goods-action-button bind:click="signup" text="快速报名" /> -->
+
+		<block wx:if="{{cur_time>act.start_time}}">
+			<van-goods-action-button wx:if="{{order_info.status==0}}" disabled="{{order_info.is_sign_in}}"
+				bind:click="to_sign_in" text="{{order_info.is_sign_in?'已签到':'签到'}}" type="warning" />
+			<van-goods-action-button disabled="{{true}}" bind:click="signup_batch" text="报名截止" />
+		</block>
+
+		<block wx:if="{{cur_time<=act.start_time}}">
+			<van-goods-action-button wx:if="{{order_info.status==0}}" disabled="{{act.status!=0||order_info.is_sign_in}}"
+				bind:click="to_sign_in" text="{{order_info.is_sign_in?'已签到':'签到'}}" type="warning" />
+			<van-goods-action-button disabled="{{act.status!=0||!act.is_active}}"
+				wx:if="{{order_info.status!=0&&act.maximum>total_num}}" bind:click="signup_batch" text="立即报名" />
+			<van-goods-action-button disabled="{{true}}" wx:if="{{order_info.status!=0&&act.maximum<=total_num}}"
+				bind:click="signup_batch" text="已报满" />
+			<van-goods-action-button disabled="{{act.status!=0||order_info.is_sign_in}}" wx:if="{{order_info.status==0}}"
+				bind:click="cancel_order" text="取消报名" />
+		</block>
+	</van-goods-action>
+
+	<view wx:if="{{!show_sign_info&&!is_manger}}"
+		class="bg-gray flex flex-wrap justify-between align-center padding cu-bar foot">
+		<button disabled="{{thing.is_cancel||!user_visit_record.length}}" wx:if="{{false}}" open-type="share"
+			class="cuIcon-weixin cu-btn margin-right {{user_visit_record.length&&!user_visit_record[0].is_cancel?'bg-blue':'bg-orange'}}"
+			style="">{{user_visit_record.length?(user_visit_record[0].is_cancel?'请同步到群你已取消报名':'请同步到群你已报名成功'):'报名后点击此处同步到群'}}</button>
+		<button disabled="{{thing.is_cancel}}" open-type="share"
+			class="cuIcon-weixin cu-btn margin-right {{show_record?'bg-cyan':'bg-blue'}}" bindtap=""
+			style="width:30%;">分享到群</button>
+		<button bindtap="manger" class="cu-btn bg-blue"
+			style="width:30%;">管理活动</button>
+		<!-- <button wx:if="{{order_info.status==0&&cur_time>act.start_time}}" disabled="{{true}}"
+			class="cuIcon-edit cu-btn margin-right bg-orange" bindtap="to_sign_in"
+			style="width:30%;">{{order_info.is_sign_in?'已签到':'签到'}}</button> -->
+		<!-- <button class="cuIcon-edit cu-btn margin-right bg-orange" bindtap="to_pay" style="width:30%;">支付</button> -->
+		<!-- <button wx:if="{{order_info.status!=0&&cur_time<act.start_time}}" disabled="{{true}}" class="cu-btn bg-red"
+			bindtap="signup_batch" style="width:30%;">立即报名</button>
+		<button wx:if="{{order_info.status==0&&cur_time<act.close_time}}" disabled="{{true}}" class="cu-btn bg-red"
+			bindtap="cancel_order" style="width:30%;">取消报名</button> -->
+	</view>
+
+</view>
+
+
+<!-- 分享弹窗 -->
+<!-- <van-dialog use-slot title="{{onshare_text.title_text}}" show="{{ locks }}" show-cancel-button bind:close="onClose"
+	confirm-button-open-type="share" confirmButtonText="分享到群" cancelButtonText="关闭" bind:click='onClose'
+	bindtap="set_sub_msg">
+	<view style="padding:20rpx 30rpx;">
+
+		<wux-spin nested spinning="{{ !imageUrl }}" tip="" wx:if="{{!imageUrl}}">
+			<view style='height:100rpx'></view>
+		</wux-spin>
+
+		<image wx:if="{{imageUrl}}" class="demo-image" style="width:100%;" mode="aspectFit" src="{{imageUrl}}" />
+	</view>
+</van-dialog>
+
+<van-dialog id="van-dialog" /> -->
+
+
+
+<!-- 管理菜单组件 -->
+<wux-actionsheet id="wux-actionsheet" />
+
+
+<!-- 报名信息填写组件 -->
+<wux-popup wx:if="{{act.act_mode=='advanced'}}" position="bottom" class-names="slideInUp" visible="{{ show_sign_info }}"
+	bind:close="onClose2">
+	<view class="" style="">
+		<wux-cell-group title="剩余名额{{act.maximum-total_num}}个,单人最多允许报名{{act.single_upper_limit}}人">
+			<wux-cell hover-class="none" title="男士人数">
+				<wux-input-number color="royal" default-value="{{ params.order_items[0].num }}" min="{{ 0 }}"
+					max="{{act.single_upper_limit-params.order_items[1].num}}" value="{{ params.order_items[0].num }}"
+					bind:change="onChangesetboysnum" slot="footer" />
+			</wux-cell>
+			<wux-cell hover-class="none" title="女士人数">
+				<wux-input-number color="dark" default-value="{{  params.order_items[1].num }}" min="{{ 0 }}"
+					max="{{act.single_upper_limit-params.order_items[0].num}}" value="{{  params.order_items[1].num }}"
+					bind:change="onChangesetgirlsnum" slot="footer" />
+			</wux-cell>
+			<wux-cell title="姓名/昵称">
+				<view class='input_width' slot="footer">
+					<input type="text" placeholder="输入姓名/昵称" value="{{params.contact_info.name}}" bindinput="setRealName" />
+				</view>
+			</wux-cell>
+			<wux-cell title="电话">
+				<view class='input_width' slot="footer">
+					<input type="number" placeholder="输入手机号" value="{{params.contact_info.cellphone}}" bindinput="setCellPhone" />
+				</view>
+			</wux-cell>
+		</wux-cell-group>
+
+
+		<!-- 提交报名信息 -->
+		<van-submit-bar loading="{{ false }}" disabled="{{ false }}" class=""
+			price="{{ (act.price.male_price*params.order_items[0].num+act.price.women_price*params.order_items[1].num )*100}}"
+			button-text="提交信息" bind:submit="onClickButton" custom-class="van-submit-bar" tip="{{ true }}"
+			safe-area-inset-bottom="{{ true }}">
+			<van-tag type="primary" custom-class="van-tag-mf">男×{{params.order_items[0].num}}，女×{{params.order_items[1].num}}
+			</van-tag>
+			<view slot="tip">
+				提交即代表接受免责协议
+				<text class="edit-address" bindtap="onClickAlert">免责声明</text>
+			</view>
+		</van-submit-bar>
+
+		<van-toast id="van-toast" />
+	</view>
+</wux-popup>
+
+<wux-popup wx:else position="bottom" class-names="slideInUp" visible="{{ show_sign_info }}" bind:close="onClose2">
+	<view class="" style="">
+		<wux-cell-group title="填写报名信息">
+			<wux-cell hover-class="none" title="男士人数">
+				<wux-input-number color="royal" default-value="{{ params.order_items[0].num }}" min="{{ 0 }}" max="{{5}}"
+					value="{{ params.order_items[0].num }}" bind:change="onChangesetboysnum" slot="footer" />
+			</wux-cell>
+			<wux-cell hover-class="none" title="女士人数">
+				<wux-input-number color="dark" default-value="{{  params.order_items[1].num }}" min="{{ 0 }}" max="{{5}}"
+					value="{{  params.order_items[1].num }}" bind:change="onChangesetgirlsnum" slot="footer" />
+			</wux-cell>
+			<wux-cell title="姓名/昵称">
+				<view class='input_width' slot="footer">
+					<input type="text" placeholder="输入姓名/昵称" value="{{params.contact_info.name}}" bindinput="setRealName" />
+				</view>
+			</wux-cell>
+			<wux-cell title="电话">
+				<view class='input_width' slot="footer">
+					<input type="number" placeholder="输入手机号" value="{{params.contact_info.cellphone}}" bindinput="setCellPhone" />
+				</view>
+			</wux-cell>
+		</wux-cell-group>
+
+		<view class="padding">
+			<wux-wing-blank body-style="margin-bottom:20rpx;margin-top:20rpx;background-color: #f6f6f6;">
+				<wux-button block type="positive" bindtap='onClickButton'>提交信息</wux-button>
+			</wux-wing-blank>
+		</view>
+
+
+
+		<!-- <van-submit-bar loading="{{ false }}" disabled="{{ false }}" class="" price="" button-text="提交信息"
+			bind:submit="onClickButton" custom-class="van-submit-bar" tip="{{ true }}" safe-area-inset-bottom="{{ true }}">
+			<view style="padding-right:300rpx;">
+				<van-tag type="primary" custom-class="van-tag-mf">
+					男×{{params.order_items[0].num}}，女×{{params.order_items[1].num}}</van-tag>
+			</view>
+
+			<view slot="tip">
+				提交即代表接受免责协议
+				<text class="edit-address" bindtap="onClickAlert">免责声明</text>
+			</view>
+		</van-submit-bar> -->
+
+		<van-toast id="van-toast" />
+	</view>
+</wux-popup>
+
+
+<!-- 取消报名确认弹窗组件 -->
+<wux-dialog id="wux-dialog" />
+
+<view hidden='{{true}}' style="height: 1000rpx;">
+	<canvas hidden='{{imageUrl}}' style="width: 500px; height: 400px;" canvas-id="springCanvas"></canvas>
+</view>
