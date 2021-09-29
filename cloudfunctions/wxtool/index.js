@@ -153,7 +153,7 @@ const get_req = (wxKey, msgType, msg, roomid, wxid) => {
     // {
     //   "description": "测试卡片",
     //   "thumbnailUrl": "http://mmbiz.qpic.cn/mmbiz_jpg/mLJaHznUd7O4HCW51IPGVarcVwAAAuofgAibUYIct2DBPERYIlibbuwthASJHPBfT9jpSJX4wfhGEBnqDvFHHQww/0",
-    //   "title": "欢迎使用群组大师小程序",
+    //   "title": "欢迎使用活动报名助手小程序",
     //   "url": "https://mp.weixin.qq.com/s/m6qbYo6eFR8RbIj25Xm4rQ"
     // }
     return {
@@ -529,7 +529,6 @@ exports.main = async (event, context) => {
   console.info(event)
   console.info('requestContext------------------------------------------------')
   console.info(event.requestContext)
-  console.info('这个是bot',bot)
 
   let {
     action,
@@ -632,15 +631,7 @@ exports.main = async (event, context) => {
         gender: data.user.gender,
         wxid
       }
-//<<<<<<< main
 
-      let msg = ''
-
-      if (content.replace(/\s*/g, "") == '帮助') {
-//=======
-      // if(/^报名$/i.test(text)){//9.27添加内容
-      //   sign_in_act(act, member, add_num, is_bench, create_time)
-      // }
 
       let msg = ''
 
@@ -703,7 +694,7 @@ exports.main = async (event, context) => {
         let more_num = Number(content.replace(/\s*/g, "").slice(4, 5))
         let act = await get_act(data)
         if (!act._id) { //no act is active
-          msg = "群内没有可报名/调整的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+          msg = "群内没有可报名/调整的活动"
           req = get_req(wxKey, 'Text', msg, roomid, wxid)
         } else {
 
@@ -750,7 +741,7 @@ exports.main = async (event, context) => {
           // 查询俱乐部活动信息
           let act = await get_act(data)
           if (!act._id) { //no act is active
-            msg = "群内没有可报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+            msg = "群内没有可报名的活动"
           } else { //have active act
             msg = await sign_in_act2(act, member, add_num, create_time)
           }
@@ -805,7 +796,7 @@ exports.main = async (event, context) => {
           // 查询俱乐部活动信息
           let act = await get_act(data)
           if (!act._id) {
-            msg = "群内没有可报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+            msg = "群内没有可报名的活动"
           } else {
             msg = await sign_in_act2(act, member, add_num, create_time)
           }
@@ -826,7 +817,7 @@ exports.main = async (event, context) => {
 
 
         if (!act._id) {
-          msg = "群内没有可取消报名的活动，点击链接 qr14.cn/E8eqXc 进入 #群组大师小程序 查看更多活动"
+          msg = "群内没有可取消报名的活动"
           req = get_req(wxKey, 'Text', msg, roomid, wxid)
 
 
@@ -893,13 +884,8 @@ exports.main = async (event, context) => {
         msg: body
       }
     })
-//<<<<<<< main
-  } else {
-    // 非post请求，返回错误信息
-//=======
-  }
+
   } else {//仅代表调用机器人成功的情况
-//>>>>>>> main
     console.info
     req = def_req
     req.data = event
