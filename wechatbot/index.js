@@ -290,6 +290,7 @@ bot.
 
         let msg = `欢迎@${nameList} 加入群~`
         room.say(msg)
+    })
 
     .on('friendship', async (friendship) => {
 
